@@ -27,18 +27,31 @@
     refreshModel,
     removeModel
   } from '$lib/model.svelte';
+  import {
+    clearReminders,
+    refreshReminderState,
+    reminderState,
+    scheduleReminders
+  } from '$lib/reminders.svelte';
 
   let rustVersion = $state('web preview');
   let copied = $state(false);
 
   onMount(async () => {
     void refreshModel();
+    void refreshReminderState();
     try {
       rustVersion = await invoke<string>('core_version');
     } catch {
       rustVersion = 'web preview';
     }
   });
+
+  async function setReminder(value: string) {
+    setSetting('reminderTime', value);
+    if (!inTauri()) return;
+    await scheduleReminders(value);
+  }
 
   async function copyExport() {
     await navigator.clipboard.writeText(exportJson());
@@ -141,16 +154,26 @@
       <h2 class="settings-title">Reminders</h2>
     </div>
     <p class="small">
-      Pick a time. Notification scheduling comes next; for now this saves your
-      preference.
+      One nudge a day at this time, plus a Sunday look-back. No streak warnings.
     </p>
     <input
       class="field mt-2"
       type="time"
       value={app.settings.reminderTime}
-      onchange={(event) => setSetting('reminderTime', event.currentTarget.value)}
+      onchange={(event) => setReminder(event.currentTarget.value)}
       aria-label="Reminder time"
     />
+    <div class="row wrap mt-2">
+      <span class="status-pill">
+        {reminderState.enabled ? 'Reminder on' : 'Not scheduled'}
+      </span>
+      {#if reminderState.enabled}
+        <button class="link-btn" onclick={clearReminders}>Turn off</button>
+      {/if}
+    </div>
+    {#if reminderState.error}
+      <p class="small mt-2" style="color: var(--danger)">{reminderState.error}</p>
+    {/if}
   </div>
 
   <div class="settings-card orange">

@@ -462,6 +462,85 @@ a {
   line-height: 1.4;
 }
 
+.weekly-nudge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: var(--sage-soft);
+}
+
+.weekly-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--card);
+  color: var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.weekly-title {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.weekly-body {
+  margin: 1px 0 0;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+
+.extras-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  padding: 6px 9px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 600;
+}
+
+.chip:hover {
+  border-color: var(--rust);
+  color: var(--rust);
+}
+
+.chip.active {
+  background: var(--rust-soft);
+  border-color: var(--rust);
+  color: var(--rust-dark);
+}
+
+.extra-input {
+  margin-top: 8px;
+  border: 0;
+}
+
+.extra-input.one {
+  background: var(--butter-soft);
+}
+
+.extra-input.win {
+  background: var(--lime-soft);
+}
+
 .quick-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;

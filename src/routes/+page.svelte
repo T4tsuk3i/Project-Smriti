@@ -50,7 +50,7 @@
         onOpenJournal={() => go('journal')}
         onOpenSettings={() => go('settings')}
         onStuck={() => (showStuck = true)}
-        onFocus={() => (showFocus = true)}
+        onOpenWeekly={() => go('weekly')}
       />
     {:else if tab === 'journal'}
       <Journal onWrite={() => go('today')} />

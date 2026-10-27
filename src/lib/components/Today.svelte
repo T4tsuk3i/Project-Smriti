@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { ArrowRight, CircleHelp, Flame, Sparkles, Timer } from 'lucide-svelte';
+  import { ArrowRight, CircleHelp, Flame, Sparkles, Target } from 'lucide-svelte';
   import EntryCard from '$lib/components/EntryCard.svelte';
   import MoodPicker from '$lib/components/MoodPicker.svelte';
   import { modelState } from '$lib/model.svelte';
@@ -16,13 +16,13 @@
   let {
     onOpenJournal,
     onOpenSettings,
-    onStuck,
-    onFocus
+    onOpenWeekly,
+    onStuck
   }: {
     onOpenJournal: () => void;
     onOpenSettings: () => void;
+    onOpenWeekly: () => void;
     onStuck: () => void;
-    onFocus: () => void;
   } = $props();
 
   let text = $state('');
@@ -31,6 +31,8 @@
   let mood = $state<MoodId | undefined>(undefined);
   let safety = $state<SafetyCheck | null>(null);
   let saved = $state(false);
+  let showOneThing = $state(false);
+  let showWin = $state(false);
 
   const MOOD_NOTES: Record<MoodId, string> = {
     good: 'Good days are worth noticing.',
@@ -44,16 +46,17 @@
   const recent = $derived(app.entries.slice(0, 3));
   const momentum = $derived(computeWeekStats(lastSevenDays(app.entries)));
   const moodNote = $derived(mood ? MOOD_NOTES[mood] : null);
+  const isSunday = new Date().getDay() === 0;
 
   const prompts = [
-    'What would make today 10% easier?',
+    'What do you want to remember about today?',
     'What is taking up the most space in your head?',
     'What did you get through today?',
-    'What is one thing you keep forgetting?',
-    'What do you want to remember about today?',
-    'What is the smallest next step?'
+    'What would make today 10% easier?',
+    'What is one thing you keep forgetting?'
   ];
-  const prompt = prompts[Math.floor(new Date().setHours(0, 0, 0, 0) / 86_400_000) % prompts.length];
+  const prompt =
+    prompts[Math.floor(new Date().setHours(0, 0, 0, 0) / 86_400_000) % prompts.length];
 
   function greeting(): string {
     const hour = new Date().getHours();
@@ -71,10 +74,6 @@
       : `${base}.`;
   }
 
-  function usePrompt() {
-    text = text.trim() ? `${text.trim()}\n\n${prompt}\n` : `${prompt}\n`;
-  }
-
   function save() {
     const value = text.trim();
     if (!value) return;
@@ -85,6 +84,8 @@
     oneThing = '';
     win = '';
     mood = undefined;
+    showOneThing = false;
+    showWin = false;
     safety = check.flagged ? check : null;
     saved = true;
     setTimeout(() => (saved = false), 2200);
@@ -103,45 +104,36 @@
     </div>
   </div>
 
-  <div class="card mt-4">
+  {#if isSunday && app.entries.length > 0}
+    <div class="weekly-nudge">
+      <span class="weekly-icon"><Sparkles size={17} /></span>
+      <div>
+        <p class="weekly-title">Sunday. Want the week in words?</p>
+        <p class="weekly-body">A two-minute look-back. No score.</p>
+      </div>
+      <button class="link-btn" onclick={onOpenWeekly}>Open</button>
+    </div>
+  {/if}
+
+  <div class="card today-card mt-4">
     <div class="card-row">
-      <p class="card-title">How are you feeling?</p>
+      <p class="card-title">How's today?</p>
       <span class="small faint">No wrong answer</span>
     </div>
+
     <MoodPicker value={mood} onChange={(next) => (mood = next)} />
     {#if moodNote}
       <p class="mood-note">{moodNote}</p>
     {/if}
-  </div>
 
-  <div class="card">
-    <p class="card-title">Small things</p>
-    <p class="small">Optional. Both count.</p>
-    <div class="one-thing mt-2">
-      <span class="icon">🎯</span>
-      <input bind:value={oneThing} maxlength="120" placeholder="One thing for today" />
-    </div>
-    <div class="one-thing win-row">
-      <span class="icon">✨</span>
-      <input bind:value={win} maxlength="120" placeholder="One tiny win" />
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="prompt">
-      <div class="prompt-copy">
-        <span class="prompt-label">Try this</span>
-        <span class="prompt-text">{prompt}</span>
-      </div>
-      <button class="link-btn" onclick={usePrompt}>Use it</button>
-    </div>
     <textarea
-      class="textarea"
+      class="textarea today-textarea"
       bind:value={text}
       maxlength="12000"
-      placeholder="Start anywhere. One line counts."
+      placeholder={prompt}
       aria-label="Journal entry"
     ></textarea>
+
     <div class="write-footer">
       <span class="word-count">{words} {words === 1 ? 'word' : 'words'}</span>
       {#if saved}
@@ -150,6 +142,41 @@
       <div class="spacer"></div>
       <button class="btn" onclick={save} disabled={!text.trim()}>Save</button>
     </div>
+
+    <div class="extras-row">
+      <button
+        class="chip"
+        class:active={showOneThing}
+        onclick={() => (showOneThing = !showOneThing)}
+      >
+        <Target size={13} /> One thing
+      </button>
+      <button class="chip" class:active={showWin} onclick={() => (showWin = !showWin)}>
+        <Sparkles size={13} /> Tiny win
+      </button>
+      <button class="chip" onclick={onStuck}>
+        <CircleHelp size={13} /> Stuck
+      </button>
+    </div>
+
+    {#if showOneThing}
+      <input
+        class="field extra-input one"
+        bind:value={oneThing}
+        maxlength="120"
+        placeholder="One thing for today"
+        aria-label="One thing for today"
+      />
+    {/if}
+    {#if showWin}
+      <input
+        class="field extra-input win"
+        bind:value={win}
+        maxlength="120"
+        placeholder="One tiny win"
+        aria-label="One tiny win"
+      />
+    {/if}
   </div>
 
   {#if safety}
@@ -166,15 +193,6 @@
       </ul>
     </div>
   {/if}
-
-  <div class="quick-actions">
-    <button class="btn soft" onclick={onStuck}>
-      <CircleHelp size={16} /> I'm stuck
-    </button>
-    <button class="btn soft" onclick={onFocus}>
-      <Timer size={16} /> Focus
-    </button>
-  </div>
 
   <div class="notice mt-3">
     <span class="notice-icon"><Sparkles size={17} /></span>

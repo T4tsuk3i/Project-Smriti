@@ -69,15 +69,15 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 ### Today
 
 - Pick a mood. It should tint.
-- Type a one-thing intention.
-- Write two or three lines.
+- Type two or three lines in the single writing box.
 - Tap **Save**.
-- The entry should appear under **Lately** with the mood chip and one thing.
+- The entry should appear under **Lately**.
+- Optional: tap **One thing** or **Tiny win** to reveal an input. Tap **Stuck** for the smaller-step sheet.
 
 ### Journal
 
 - Check **This week**: entries, words, days.
-- Check the seven dots. Today should be ticked.
+- Check the seven-day date strip. Today should be highlighted with its mood emoji.
 - Search for a word from your entry.
 - Edit an entry; change the mood and text; save.
 - Delete an entry; confirm.
@@ -115,7 +115,8 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 ### Settings
 
 - Change the support country.
-- Change the reminder time. It saves the preference; scheduling is next.
+- Change the reminder time. On Android it should request notification permission and schedule a daily notification plus a Sunday 10:00 nudge.
+- Use **Turn off** to cancel the reminders.
 - Tap **Copy export**, paste somewhere, check the JSON.
 - Tap **Delete everything**, confirm. The journal should empty; settings remain.
 - Check the Rust core version in About. It says “web preview” in the browser; inside Tauri it shows the core version.

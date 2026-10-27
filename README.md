@@ -29,13 +29,14 @@ Built solo by someone with ADHD. Not medical care. Just the thing that helped me
 ## What works now
 
 - Onboarding: privacy, “not a crisis service,” optional name
-- Today: greeting, mood picker, one-thing intention, writing card
+- Today: one card — mood, one writing box, save — plus optional one thing / tiny win / stuck
 - Journal: weekly numbers, seven-day dots, search, edit, delete
 - Weekly: entries/words/days, words-per-day chart, local summary
 - Stuck sheet: too big / unclear / boring / tired / afraid → one smaller step
 - Focus timer: 10 or 25 minutes, no score
-- Settings: support country, reminder preference, export, delete everything
+- Settings: daily reminder + Sunday nudge, support country, export, delete everything
 - Local safety notice with country helplines
+- Daily + Sunday notifications
 - Model file picker + GGUF registry (inference runtime next)
 - Sample week for testing the design
 
@@ -47,7 +48,6 @@ A local GGUF file can already be selected and registered. The inference runtime 
 
 - No model is bundled. A GGUF file can be registered, but inference and reflection are not wired yet.
 - No SQLite/Rust persistence yet
-- No scheduled notifications yet
 - No app lock or encryption yet
 - No home-screen widget yet
 - No iOS build yet (needs macOS + Xcode)
