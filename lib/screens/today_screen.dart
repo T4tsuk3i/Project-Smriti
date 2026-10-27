@@ -4,12 +4,12 @@ import 'package:intl/intl.dart';
 import '../app_theme.dart';
 import '../data/journal_repository.dart';
 import '../models/journal_entry.dart';
+import '../models/mood.dart';
 import '../models/safety_check.dart';
 import '../services/safety_service.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/entry_card.dart';
 import '../widgets/model_notice.dart';
-import '../widgets/page_header.dart';
 import '../widgets/safety_notice.dart';
 
 class TodayScreen extends StatefulWidget {
@@ -32,6 +32,7 @@ class _TodayScreenState extends State<TodayScreen> {
   final _controller = TextEditingController();
 
   List<JournalEntry> _entries = const [];
+  Mood? _mood;
   SafetyCheck? _safety;
   bool _loading = true;
   bool _saving = false;
@@ -63,6 +64,14 @@ class _TodayScreenState extends State<TodayScreen> {
     return text.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).length;
   }
 
+  String get _greeting {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'Good morning.';
+    if (hour < 17) return 'Good afternoon.';
+    if (hour < 22) return 'Good evening.';
+    return 'Still up?';
+  }
+
   Future<void> _save() async {
     final content = _controller.text.trim();
     if (content.isEmpty || _saving) return;
@@ -78,8 +87,13 @@ class _TodayScreenState extends State<TodayScreen> {
         fallback: 'IN',
       );
       final check = SafetyService.check(content, country: country);
-      await widget.repository.addEntry(content, safetyFlag: check.flagged);
+      await widget.repository.addEntry(
+        content,
+        safetyFlag: check.flagged,
+        mood: _mood?.id,
+      );
       _controller.clear();
+      _mood = null;
       await _load();
       if (!mounted) return;
       setState(() {
@@ -105,89 +119,181 @@ class _TodayScreenState extends State<TodayScreen> {
     final hasText = _controller.text.trim().isNotEmpty;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 96),
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
-        PageHeader(
-          eyebrow: today,
-          title: 'What happened today?',
-          subtitle:
-              'A few lines is enough. It does not have to make sense yet.',
+        Text(_greeting, style: theme.textTheme.displaySmall),
+        const SizedBox(height: 2),
+        Text(
+          today,
+          style: theme.textTheme.bodySmall?.copyWith(color: AppColors.faint),
         ),
-        ModelNotice(onOpenSettings: widget.onOpenSettings),
+        const SizedBox(height: 18),
         Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(color: AppColors.line),
-              bottom: BorderSide(color: AppColors.line),
-            ),
-          ),
-          child: TextField(
-            controller: _controller,
-            minLines: 8,
-            maxLines: 14,
-            maxLength: 12000,
-            textCapitalization: TextCapitalization.sentences,
-            onChanged: (_) => setState(() {}),
-            decoration: const InputDecoration(
-              hintText: 'Start anywhere.',
-              counterText: '',
-              border: InputBorder.none,
-              filled: false,
-              contentPadding: EdgeInsets.zero,
-            ),
-            style: theme.textTheme.bodyMedium?.copyWith(
-              height: 1.7,
-              fontSize: 16,
-              color: AppColors.ink,
-            ),
+          padding: const EdgeInsets.all(16),
+          decoration: _cardDecoration(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'How are you arriving?',
+                style: theme.textTheme.headlineSmall,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  for (final mood in moods)
+                    Expanded(
+                      child: _MoodButton(
+                        mood: mood,
+                        selected: _mood?.id == mood.id,
+                        onTap: () => setState(() {
+                          _mood = _mood?.id == mood.id ? null : mood;
+                        }),
+                      ),
+                    ),
+                ],
+              ),
+            ],
           ),
         ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Text(
-              '$_wordCount ${_wordCount == 1 ? 'word' : 'words'}',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.faint,
-                fontSize: 12,
+        const SizedBox(height: 14),
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+          decoration: _cardDecoration(),
+          child: Column(
+            children: [
+              TextField(
+                controller: _controller,
+                minLines: 5,
+                maxLines: 10,
+                maxLength: 12000,
+                textCapitalization: TextCapitalization.sentences,
+                onChanged: (_) => setState(() {}),
+                decoration: const InputDecoration(
+                  hintText: "What's on your mind?",
+                  counterText: '',
+                  border: InputBorder.none,
+                  filled: false,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  height: 1.65,
+                  fontSize: 16,
+                  fontFamily: 'serif',
+                ),
               ),
-            ),
-            const Spacer(),
-            FilledButton(
-              onPressed: hasText && !_saving ? _save : null,
-              child: Text(_saving ? 'Saving…' : 'Save'),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Text(
+                    '$_wordCount ${_wordCount == 1 ? 'word' : 'words'}',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: AppColors.faint,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Spacer(),
+                  FilledButton(
+                    onPressed: hasText && !_saving ? _save : null,
+                    child: Text(_saving ? 'Saving…' : 'Save'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
         if (_safety != null) SafetyNotice(check: _safety!),
-        const SizedBox(height: 30),
+        const SizedBox(height: 12),
+        ModelNotice(onOpenSettings: widget.onOpenSettings),
+        const SizedBox(height: 6),
         Row(
           children: [
-            Text('Earlier', style: theme.textTheme.headlineSmall),
+            Text('Lately', style: theme.textTheme.headlineMedium),
             const Spacer(),
             if (_entries.isNotEmpty && widget.onOpenJournal != null)
               TextButton(
                 onPressed: widget.onOpenJournal,
-                child: const Text('All entries'),
+                child: const Text('See all'),
               ),
           ],
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: 8),
         if (_loading)
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 24),
-            child: LinearProgressIndicator(minHeight: 1),
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: LinearProgressIndicator(minHeight: 2),
           )
         else if (_entries.isEmpty)
           const EmptyState(
-            title: 'Nothing yet.',
-            body: 'Write the first one. One line counts.',
+            title: 'Blank page.',
+            body: 'Write one line. That counts.',
           )
         else
           for (final entry in _entries) EntryCard(entry: entry),
       ],
+    );
+  }
+
+  BoxDecoration _cardDecoration() {
+    return BoxDecoration(
+      color: AppColors.paperRaised,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          color: AppColors.ink.withValues(alpha: 0.05),
+          blurRadius: 20,
+          offset: const Offset(0, 7),
+        ),
+      ],
+    );
+  }
+}
+
+class _MoodButton extends StatelessWidget {
+  const _MoodButton({
+    required this.mood,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final Mood mood;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        padding: const EdgeInsets.symmetric(vertical: 9),
+        decoration: BoxDecoration(
+          color: selected
+              ? mood.soft
+              : AppColors.paperDeep.withValues(alpha: 0.55),
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color: selected ? mood.color : Colors.transparent,
+            width: 1.2,
+          ),
+        ),
+        child: Column(
+          children: [
+            Text(mood.emoji, style: const TextStyle(fontSize: 20)),
+            const SizedBox(height: 3),
+            Text(
+              mood.label,
+              style: TextStyle(
+                fontSize: 10.5,
+                fontWeight: FontWeight.w600,
+                color: selected ? mood.color : AppColors.muted,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

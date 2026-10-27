@@ -13,37 +13,42 @@ class ModelNotice extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 22),
-      padding: const EdgeInsets.only(left: 12),
-      decoration: const BoxDecoration(
-        border: Border(left: BorderSide(color: AppColors.olive, width: 2)),
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+      decoration: BoxDecoration(
+        color: AppColors.lilacSoft,
+        borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            ModelService.label,
-            style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+          const Icon(Icons.memory_outlined, size: 18, color: AppColors.lilac),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ModelService.label,
+                  style: theme.textTheme.titleMedium?.copyWith(fontSize: 13.5),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'Writing works. Reflection is off until a local model is set up.',
+                  style: theme.textTheme.bodySmall?.copyWith(fontSize: 12.2),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 3),
-          Text(
-            'You can write now. Reflection stays off until a model is set up.',
-            style: theme.textTheme.bodySmall,
-          ),
           if (onOpenSettings != null)
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: TextButton(
-                onPressed: onOpenSettings,
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(0, 30),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: const Text('Details'),
+            TextButton(
+              onPressed: onOpenSettings,
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                minimumSize: const Size(0, 30),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
+              child: const Text('Details'),
             ),
         ],
       ),

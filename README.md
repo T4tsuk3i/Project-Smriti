@@ -132,6 +132,20 @@ flutter pub get
 flutter run
 ```
 
+Build the debug APK:
+
+```sh
+flutter build apk --debug
+```
+
+It lands at:
+
+```text
+build/app/outputs/flutter-apk/app-debug.apk
+```
+
+For a step-by-step first test, see [TESTING.md](TESTING.md).
+
 Rust tests:
 
 ```sh

@@ -161,4 +161,93 @@ class WeeklySummaryService {
 
     return buffer.toString().trim();
   }
+
+  static WeekStats stats(List<JournalEntry> entries, {DateTime? now}) {
+    final today = (now ?? DateTime.now()).toLocal();
+    final start = DateTime(
+      today.year,
+      today.month,
+      today.day,
+    ).subtract(const Duration(days: 6));
+
+    final bars = <DayBar>[];
+    for (var i = 0; i < 7; i++) {
+      final day = DateTime(start.year, start.month, start.day + i);
+      final sameDay = entries.where((entry) {
+        final local = entry.createdAt.toLocal();
+        return local.year == day.year &&
+            local.month == day.month &&
+            local.day == day.day;
+      }).toList();
+
+      bars.add(
+        DayBar(
+          date: day,
+          label: DateFormat('E').format(day),
+          words: sameDay.fold(
+            0,
+            (sum, entry) => sum + _wordCount(entry.content),
+          ),
+          wrote: sameDay.isNotEmpty,
+        ),
+      );
+    }
+
+    final moodCounts = <String, int>{};
+    for (final entry in entries) {
+      if (entry.mood != null) {
+        moodCounts[entry.mood!] = (moodCounts[entry.mood!] ?? 0) + 1;
+      }
+    }
+
+    return WeekStats(
+      entries: entries.length,
+      words: entries.fold(0, (sum, entry) => sum + _wordCount(entry.content)),
+      days: entries
+          .map(
+            (entry) =>
+                DateFormat('yyyy-MM-dd').format(entry.createdAt.toLocal()),
+          )
+          .toSet()
+          .length,
+      bars: bars,
+      moodCounts: moodCounts,
+    );
+  }
+
+  static int _wordCount(String value) {
+    final text = value.trim();
+    if (text.isEmpty) return 0;
+    return text.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).length;
+  }
+}
+
+class DayBar {
+  const DayBar({
+    required this.date,
+    required this.label,
+    required this.words,
+    required this.wrote,
+  });
+
+  final DateTime date;
+  final String label;
+  final int words;
+  final bool wrote;
+}
+
+class WeekStats {
+  const WeekStats({
+    required this.entries,
+    required this.words,
+    required this.days,
+    required this.bars,
+    required this.moodCounts,
+  });
+
+  final int entries;
+  final int words;
+  final int days;
+  final List<DayBar> bars;
+  final Map<String, int> moodCounts;
 }

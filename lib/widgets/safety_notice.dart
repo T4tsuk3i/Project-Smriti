@@ -13,21 +13,32 @@ class SafetyNotice extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(top: 18),
-      padding: const EdgeInsets.only(left: 12),
-      decoration: const BoxDecoration(
-        border: Border(left: BorderSide(color: AppColors.danger, width: 2)),
+      margin: const EdgeInsets.only(top: 14),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.rustSoft,
+        borderRadius: BorderRadius.circular(18),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'That sounds heavy.',
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: AppColors.danger,
-            ),
+          Row(
+            children: [
+              const Icon(
+                Icons.favorite_outline,
+                size: 18,
+                color: AppColors.danger,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'That sounds heavy.',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: AppColors.danger,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 5),
           Text(
             'If you might be in danger, please call a local helpline or emergency '
             'services. Smriti cannot monitor you or call anyone for you.',

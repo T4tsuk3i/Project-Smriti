@@ -101,10 +101,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final theme = Theme.of(context);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 96),
       children: [
-        const PageHeader(title: 'Settings'),
-        _Section(
+        const PageHeader(
+          title: 'Settings',
+          subtitle: 'Small app. Local by default.',
+        ),
+        _SettingsCard(
+          color: AppColors.lilacSoft,
+          icon: Icons.memory_outlined,
+          iconColor: AppColors.lilac,
           title: 'Model',
           children: [
             Row(
@@ -114,13 +120,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 Text(
                   ModelService.shortStatus,
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.olive,
-                    fontWeight: FontWeight.w600,
+                    color: AppColors.lilac,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 5),
             Text(ModelService.explanation, style: theme.textTheme.bodySmall),
             const SizedBox(height: 4),
             Text(
@@ -131,7 +137,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-        _Section(
+        const SizedBox(height: 14),
+        _SettingsCard(
+          color: AppColors.sageSoft,
+          icon: Icons.favorite_outline,
+          iconColor: AppColors.sage,
           title: 'Support',
           children: [
             Text(
@@ -144,8 +154,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
                 color: AppColors.paperRaised,
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.line),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
@@ -174,7 +183,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-        _Section(
+        const SizedBox(height: 14),
+        _SettingsCard(
+          color: AppColors.orangeSoft,
+          icon: Icons.folder_outlined,
+          iconColor: AppColors.orange,
           title: 'Data',
           children: [
             Text(
@@ -191,18 +204,18 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 OutlinedButton(
                   onPressed: _loading ? null : _copyExport,
                   style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.paperRaised,
                     foregroundColor: AppColors.ink,
-                    side: const BorderSide(color: AppColors.line),
+                    side: BorderSide.none,
                   ),
                   child: const Text('Copy export'),
                 ),
                 OutlinedButton(
                   onPressed: _clearing ? null : _clearJournal,
                   style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.paperRaised,
                     foregroundColor: AppColors.danger,
-                    side: BorderSide(
-                      color: AppColors.danger.withValues(alpha: 0.4),
-                    ),
+                    side: BorderSide.none,
                   ),
                   child: Text(_clearing ? 'Deleting…' : 'Delete everything'),
                 ),
@@ -210,7 +223,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-        _Section(
+        const SizedBox(height: 14),
+        _SettingsCard(
+          color: AppColors.yellowSoft,
+          icon: Icons.info_outline,
+          iconColor: AppColors.yellow,
           title: 'About',
           children: [
             Text('Smriti 0.1.0 · MIT', style: theme.textTheme.bodySmall),
@@ -226,12 +243,12 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 color: AppColors.faint,
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 8),
             Text(
               'No account. No server. No analytics.',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: AppColors.olive,
-                fontWeight: FontWeight.w600,
+                color: AppColors.muted,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ],
@@ -241,25 +258,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-class _Section extends StatelessWidget {
-  const _Section({required this.title, required this.children});
+class _SettingsCard extends StatelessWidget {
+  const _SettingsCard({
+    required this.color,
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.children,
+  });
 
+  final Color color;
+  final IconData icon;
+  final Color iconColor;
   final String title;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 26),
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(20),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: theme.textTheme.headlineSmall),
-          const SizedBox(height: 8),
+          Row(
+            children: [
+              Container(
+                width: 38,
+                height: 38,
+                decoration: BoxDecoration(
+                  color: AppColors.paperRaised,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(icon, color: iconColor, size: 20),
+              ),
+              const SizedBox(width: 10),
+              Text(title, style: theme.textTheme.headlineSmall),
+            ],
+          ),
+          const SizedBox(height: 12),
           ...children,
-          const SizedBox(height: 20),
-          const Divider(height: 1),
         ],
       ),
     );
