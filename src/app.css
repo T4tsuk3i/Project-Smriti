@@ -63,29 +63,29 @@
 }
 
 :root {
-  --paper: #fff7fa;
-  --paper-deep: #fdebf3;
+  --paper: #f7fcfa;
+  --paper-deep: #e8f6f2;
   --card: #ffffff;
-  --ink: #271a21;
-  --muted: #7a6570;
-  --faint: #b49aa8;
-  --line: #f4dde8;
-  --rust: #ef4f86;
-  --rust-dark: #d93670;
-  --rust-soft: #fde3ec;
-  --peach: #ffd6e4;
-  --sage: #1fbfae;
-  --sage-soft: #ddf7f2;
-  --butter: #e2b53b;
+  --ink: #17211f;
+  --muted: #627973;
+  --faint: #a3b8b2;
+  --line: #dcede8;
+  --rust: #12b5a4;
+  --rust-dark: #0b8f82;
+  --rust-soft: #ddf6f1;
+  --peach: #cff0ea;
+  --sage: #6faf6a;
+  --sage-soft: #eaf5e6;
+  --butter: #d9a93e;
   --butter-soft: #fff4cf;
   --orange: #ff9f43;
   --orange-soft: #ffeeda;
-  --lilac: #a78bfa;
+  --lilac: #9580c9;
   --lilac-soft: #efe9ff;
-  --lime: #a9d45a;
+  --lime: #9fca52;
   --lime-soft: #eef8d8;
-  --danger: #e34b5f;
-  --shadow: 0 12px 30px rgba(239, 79, 134, 0.1);
+  --danger: #d9604e;
+  --shadow: 0 12px 30px rgba(18, 181, 164, 0.1);
   --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif;
   --serif: "Newsreader", "Iowan Old Style", "Palatino Linotype", "Book Antiqua",
@@ -101,7 +101,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #f3dde7;
+  background: #e4f2ee;
   color: var(--ink);
   font-family: var(--sans);
   -webkit-font-smoothing: antialiased;
@@ -133,7 +133,7 @@ a {
   flex-direction: column;
   overflow: hidden;
   background:
-    linear-gradient(180deg, #ffe2ec 0%, var(--paper) 36%, var(--paper) 100%);
+    linear-gradient(180deg, #e2f7f2 0%, var(--paper) 36%, var(--paper) 100%);
   position: relative;
 }
 
@@ -216,7 +216,7 @@ a {
   flex: 1 1 auto;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 4px 16px 108px;
+  padding: 4px 16px 24px;
   scrollbar-width: none;
 }
 
@@ -304,7 +304,7 @@ a {
 
 .card {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 16px;
   box-shadow: var(--shadow);
   margin-bottom: 14px;
@@ -377,7 +377,7 @@ a {
 .mood-button.selected {
   border-color: var(--mood-color, var(--rust));
   background: var(--mood-soft, var(--rust-soft));
-  box-shadow: 0 6px 14px rgba(239, 79, 134, 0.12);
+  box-shadow: 0 6px 14px rgba(18, 181, 164, 0.12);
   transform: translateY(-1px);
 }
 
@@ -391,7 +391,7 @@ a {
   gap: 10px;
   margin-top: 12px;
   padding: 11px 12px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--butter-soft);
 }
 
@@ -438,7 +438,7 @@ a {
   gap: 10px;
   margin-bottom: 10px;
   padding: 10px 12px;
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--butter-soft);
 }
 
@@ -532,7 +532,7 @@ a {
 
 .btn {
   border: 0;
-  border-radius: 14px;
+  border-radius: 999px;
   padding: 11px 18px;
   background: var(--rust);
   color: #fff;
@@ -602,7 +602,7 @@ a {
 
 .entry-card {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: 22px;
   padding: 14px;
   box-shadow: var(--shadow);
   margin-bottom: 11px;
@@ -810,7 +810,7 @@ a {
 
 .empty-card {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 20px;
   box-shadow: var(--shadow);
   display: flex;
@@ -939,7 +939,7 @@ a {
 
 .letter-card {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 18px;
   box-shadow: var(--shadow);
 }
@@ -974,7 +974,7 @@ a {
 .segmented button.active {
   background: var(--rust);
   color: #fff;
-  box-shadow: 0 5px 12px rgba(239, 79, 134, 0.22);
+  box-shadow: 0 5px 12px rgba(18, 181, 164, 0.22);
 }
 
 .date-strip {
@@ -991,7 +991,7 @@ a {
   align-items: center;
   gap: 1px;
   padding: 7px 0 5px;
-  border-radius: 13px;
+  border-radius: 16px;
   background: var(--paper-deep);
   color: var(--muted);
 }
@@ -1033,7 +1033,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 24px rgba(239, 79, 134, 0.34);
+  box-shadow: 0 12px 24px rgba(18, 181, 164, 0.34);
 }
 
 .fab:hover {
@@ -1051,7 +1051,7 @@ a {
   align-items: center;
   gap: 8px;
   background: var(--card);
-  border-radius: 14px;
+  border-radius: 999px;
   padding: 0 12px;
   box-shadow: var(--shadow);
   margin: 6px 0 14px;
@@ -1071,7 +1071,7 @@ a {
 }
 
 .settings-card {
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 16px;
   margin-bottom: 13px;
 }
@@ -1181,26 +1181,28 @@ a {
   flex: 1;
 }
 
+.nav-wrap {
+  flex: 0 0 auto;
+  padding: 0 16px calc(10px + env(safe-area-inset-bottom));
+}
+
 .bottom-nav {
-  position: fixed;
+  position: relative;
   z-index: 30;
-  left: 50%;
-  bottom: 12px;
-  transform: translateX(-50%);
-  width: min(calc(100vw - 32px), 448px);
+  width: 100%;
   height: 64px;
   padding: 0 5px;
   display: flex;
   background: var(--card);
-  border-radius: 22px;
-  box-shadow: 0 16px 34px rgba(43, 33, 27, 0.16);
+  border-radius: 28px;
+  box-shadow: 0 16px 34px rgba(23, 33, 31, 0.13);
 }
 
 .nav-item {
   flex: 1;
   margin: 7px 3px;
   border: 0;
-  border-radius: 16px;
+  border-radius: 20px;
   background: transparent;
   color: var(--muted);
   display: flex;
@@ -1240,7 +1242,7 @@ a {
   max-height: 88dvh;
   overflow-y: auto;
   background: var(--paper);
-  border-radius: 24px 24px 0 0;
+  border-radius: 28px 28px 0 0;
   padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
   animation: sheet-up 220ms ease-out both;
 }

@@ -61,7 +61,9 @@
     {/if}
   </main>
 
-  <Nav active={tab} onChange={go} />
+  <div class="nav-wrap">
+    <Nav active={tab} onChange={go} />
+  </div>
 </div>
 
 {#if showStuck}

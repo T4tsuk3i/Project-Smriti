@@ -12,7 +12,7 @@ export const MOODS: Mood[] = [
   { id: 'good', label: 'Good', emoji: '😊', color: '#1FBFAE', soft: '#DDF7F2' },
   { id: 'okay', label: 'Okay', emoji: '🙂', color: '#E2B53B', soft: '#FFF4CF' },
   { id: 'low', label: 'Low', emoji: '😕', color: '#FF9F43', soft: '#FFEEDA' },
-  { id: 'heavy', label: 'Heavy', emoji: '😞', color: '#EF4F86', soft: '#FDE3EC' },
+  { id: 'heavy', label: 'Heavy', emoji: '😞', color: '#D9604E', soft: '#FBE4DE' },
   { id: 'numb', label: 'Numb', emoji: '😐', color: '#A78BFA', soft: '#EFE9FF' }
 ];
 
