@@ -12,16 +12,16 @@
 </script>
 
 <div class="mood-row" role="group" aria-label="How are you arriving?">
-  {#each MOODS as mood (mood.id)}
+  {#each MOODS as mood, index (mood.id)}
     <button
       type="button"
       class="mood-button"
       class:selected={value === mood.id}
-      style={`--mood-color:${mood.color};--mood-soft:${mood.soft}`}
+      style={`--mood-color:${mood.color};--mood-soft:${mood.soft};--face-delay:${index * 0.16}s`}
       aria-pressed={value === mood.id}
       onclick={() => onChange(value === mood.id ? undefined : mood.id)}
     >
-      <span class="emoji">{mood.emoji}</span>
+      <span class="emoji" aria-hidden="true">{mood.emoji}</span>
       <span class="label">{mood.label}</span>
     </button>
   {/each}
