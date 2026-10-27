@@ -4,68 +4,69 @@
 
 ### A local-first journal that remembers.
 
-**Android-first. Flutter + Rust. On-device AI. Your words stay on your phone.**
+**Android-first. Tauri 2 + Svelte + Rust. No Android Studio. No cloud.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![Status](https://img.shields.io/badge/status-early%20development-orange)
-![Flutter](https://img.shields.io/badge/Flutter-mobile-blue)
-![Rust core](https://img.shields.io/badge/Rust-core-orange)
-![On-device](https://img.shields.io/badge/AI-on--device-brightgreen)
+![Status](https://img.shields.io/badge/status-design%20prototype-orange)
+![Tauri](https://img.shields.io/badge/Tauri-2-24c8db)
+![Svelte](https://img.shields.io/badge/Svelte-5-ff3e00)
+![Rust](https://img.shields.io/badge/Rust-core-b7410e)
 
 </div>
 
 ---
 
-Smriti is a quiet, private journal for people whose brains run on their own schedule. Write a short check-in; the app keeps it on your phone, shows you the thread over time, and — once on-device model support lands — writes you a weekly reflection without sending your life to a server.
+Smriti is a quiet journal for people whose brains run on their own schedule. Write a line, pick a mood, set one small intention, and close it. No streaks, no audience, no feed.
+
+It is Android-first. It is built with **Tauri 2, Svelte 5, and Rust**. It does not need Android Studio, and it does not call a cloud model.
 
 Built solo by someone with ADHD. Not medical care. Just the thing that helped me.
 
-> **Status: early development.** This is an Android-first mobile app, not a desktop app. Basic offline journaling is the current milestone. On-device AI is next.
+> **Status: design prototype.** The UI and local data layer are working. The Rust/SQLite core and on-device model are next.
 
 ---
 
-## Why mobile only
+## What works now
 
-The phone is where the check-in actually happens. A desktop journal asks you to sit down; a phone journal meets you where you are.
+- Onboarding: privacy, “not a crisis service,” optional name
+- Today: greeting, mood picker, one-thing intention, writing card
+- Journal: weekly numbers, seven-day dots, search, edit, delete
+- Weekly: entries/words/days, words-per-day chart, local summary
+- Stuck sheet: too big / unclear / boring / tired / afraid → one smaller step
+- Focus timer: 10 or 25 minutes, no score
+- Settings: support country, reminder preference, export, delete everything
+- Local safety notice with country helplines
+- Sample week for testing the design
 
-Smriti is:
+Data is currently stored in `localStorage` so the design can be tested in a browser. SQLite comes next.
 
-- **Android first.** Free to build, test, and sideload.
-- **iOS later.** Local builds can use free personal provisioning; App Store distribution requires the paid Apple Developer Program.
-- **Not a desktop app.** No Tauri, no Electron, no browser tab.
-- **On-device by design.** Models are meant to run on the phone. No cloud inference. No model is bundled or configured yet.
+## Not built yet
+
+- No model is bundled or configured. Reflection and ask-your-journal are off.
+- No SQLite/Rust persistence yet
+- No scheduled notifications yet
+- No app lock or encryption yet
+- No home-screen widget yet
+- No iOS build yet (needs macOS + Xcode)
 
 ---
 
-## The plan
+## Design
 
-1. **Write.** A short text check-in, saved locally.
-2. **Remember.** The Rust core will handle memory decay, reinforcement, and retrieval locally.
-3. **Reflect.** Once an on-device model is selected, Smriti writes a weekly letter from your own entries.
-4. **Ask.** Later: “When did I last feel excited about work?” answered from local memory, with citations.
-5. **Capture fast.** A home-screen / linking widget is on the roadmap for one-tap check-ins.
+The design references were warm journal apps with white cards, colour-coded moods, big numbers, and a floating nav. The ADHD rules behind the layout:
 
-No streaks. No shame. No engagement traps.
+1. One primary action per screen
+2. Two taps to capture
+3. No streaks, no shame
+4. Forgiving re-entry
+5. Start ridiculously small
+6. No infinite feed
+7. Visible choices, large touch targets
+8. Colour is never the only signal
+9. Offline always
+10. Quiet by default
 
----
-
-## Current state
-
-Working now:
-
-- Local journal entries
-- Timeline
-- Local weekly summary (no AI required)
-- Delete entries
-- Settings
-- Local safety-resource notice
-
-Intentionally not configured yet:
-
-- **No model.** The model section is blank on purpose. Smriti does not bundle weights, download a model, or call a cloud API.
-- Memory extraction, AI letters, and ask-your-journal stay off until a local model is wired.
-
-The app should still be useful without a model. That is the point.
+Palette: cream paper, white cards, burnt orange, sage, butter, lilac. Bold sans for UI, serif for journal text.
 
 ---
 
@@ -73,39 +74,79 @@ The app should still be useful without a model. That is the point.
 
 | Layer | Choice |
 |---|---|
-| Mobile UI | Flutter (Material 3, dark, calm) |
-| Core | Rust (`rust/`) — memory primitives, local scoring, future FFI |
-| Local data | SQLite on device |
-| AI | On-device GGUF via llama.cpp (roadmap) |
-| Cloud | None |
-| Desktop | None |
-
-The Rust crate currently contains tested primitives for decay, Jaccard overlap, and keyword overlap. The Flutter app runs independently until the FFI bridge is added.
+| Shell | Tauri 2 |
+| UI | Svelte 5 + SvelteKit, static adapter |
+| Core | Rust (`rust/` + `src-tauri/`) |
+| Data (now) | `localStorage` prototype |
+| Data (next) | SQLite in Rust |
+| AI (next) | Local GGUF via llama.cpp, no cloud |
+| Build | `cargo`/`npm tauri` + Gradle CLI |
+| Android Studio | Not required |
 
 ---
 
-## Roadmap
+## Build and run
 
-- **v0.1 — Local journal.** Write, timeline, local weekly summary, settings. *(current)*
-- **v0.2 — Rust core + encrypted storage.** Wire the Rust core through FFI; encrypt the local database.
-- **v0.3 — On-device model.** Pick a local GGUF; memory extraction; AI weekly letter. Still no cloud.
-- **v0.4 — iOS.** Free personal provisioning first; App Store only if the paid program is worth it.
-- **v0.5 — Linking widget.** Home-screen widget, share target, or quick-capture tile.
-- **v0.6 — Export / import.** Portable encrypted backup.
+Requirements:
 
-The roadmap is a direction, not a promise.
+- Node 20+
+- Rust 1.90+ with Android targets
+- JDK 21
+- Android SDK + NDK
+- A physical Android phone with USB debugging (no emulator needed)
+
+```sh
+export JAVA_HOME="$HOME/development/jdk-21"
+export ANDROID_HOME="$HOME/Android/Sdk"
+export NDK_HOME="$HOME/Android/Sdk/ndk/28.2.13676358"
+export PATH="$HOME/.cargo/bin:$ANDROID_HOME/platform-tools:$JAVA_HOME/bin:$PATH"
+
+npm install
+```
+
+Browser preview:
+
+```sh
+npm run dev
+```
+
+Open `http://localhost:1420`.
+
+Android, on a connected phone:
+
+```sh
+npm run tauri android dev
+```
+
+Build a signed, installable APK:
+
+```sh
+npm run android:apk
+```
+
+It lands at `dist/Smriti-0.1.0-debug.apk`.
+
+No Android Studio is required. The Android project is generated at `src-tauri/gen/android`.
+
+Rust tests:
+
+```sh
+cd rust
+cargo test
+```
+
+For the first test pass, see [TESTING.md](TESTING.md).
 
 ---
 
 ## Privacy
 
-- No Smriti server.
-- No account.
-- No telemetry by default.
-- Entries live in a local SQLite file on the phone.
-- No model is configured or downloaded right now.
-- When on-device AI lands, inference runs on the phone.
-- No cloud model is planned for the default path.
+- No account
+- No Smriti server
+- No analytics
+- No model bundled or downloaded
+- Data stays on the device
+- Export and delete are free
 
 The promise is not “we won’t look.” It is “there is nowhere for us to look.”
 
@@ -115,45 +156,17 @@ The promise is not “we won’t look.” It is “there is nowhere for us to lo
 
 Smriti is **not** a crisis service and **not** medical care. If you are in immediate danger, contact your local emergency number.
 
-The app can show support resources when it detects language that may need care. It cannot monitor you centrally, because it has no server and no plaintext access. That trade is stated plainly.
+The app shows local resources when it detects language that may need care. It cannot monitor you centrally, because there is no server and no plaintext access.
 
 ---
 
-## Build
+## Roadmap
 
-Requirements:
-
-- Flutter 3.47+ / Dart 3.13+
-- Android SDK (for Android builds)
-- Rust 1.90+ (for the core crate)
-
-```sh
-flutter pub get
-flutter run
-```
-
-Build the debug APK:
-
-```sh
-flutter build apk --debug
-```
-
-It lands at:
-
-```text
-build/app/outputs/flutter-apk/app-debug.apk
-```
-
-For a step-by-step first test, see [TESTING.md](TESTING.md).
-
-Rust tests:
-
-```sh
-cd rust
-cargo test
-```
-
-Android SDK, NDK, and the Rust FFI bridge are not bundled in this repo. The Flutter app does not require the Rust bridge yet.
+- **v0.2 — Real storage.** SQLite in Rust, migrations, encrypted database.
+- **v0.3 — Fits the day.** Notifications, app lock, home-screen widget, share target.
+- **v0.4 — On-device model.** Model picker, llama.cpp, memory extraction, weekly letter, ask.
+- **v0.5 — Trust.** Safety classifier, trusted contact, export/import.
+- **v1.0 — iOS.** Tauri iOS build, requires macOS + Xcode.
 
 ---
 
@@ -161,28 +174,18 @@ Android SDK, NDK, and the Rust FFI bridge are not bundled in this repo. The Flut
 
 ```text
 .
-├── android/          # Flutter Android host
-├── ios/              # Flutter iOS host (later)
-├── lib/              # Flutter app
-│   ├── data/         # SQLite + repositories
-│   ├── models/
-│   ├── screens/
-│   ├── services/     # model boundary, safety
-│   └── widgets/
-├── rust/             # Rust core
-│   ├── src/
-│   └── Cargo.toml
-├── README.md
+├── src/                  # Svelte UI
+│   └── lib/
+│       ├── components/
+│       ├── state.svelte.ts
+│       ├── weekly.ts
+│       └── safety.ts
+├── src-tauri/            # Tauri shell + Rust commands
+│   └── gen/android/      # generated Android project (no Studio needed)
+├── rust/                 # smriti-core: decay, overlap, future memory
+├── TESTING.md
 └── LICENSE
 ```
-
----
-
-## Contributing
-
-Feedback, safety review, and bug reports are welcome. Open an issue or start a discussion.
-
-If you work in mental health, safety, or privacy, your review matters more than a pull request.
 
 ---
 
@@ -201,7 +204,5 @@ Built solo by [T4tsuk3i](https://github.com/T4tsuk3i). AI tools were used to ass
 <div align="center">
 
 **If you have ever wanted a journal that remembers without selling you out, star the repo.**
-
-That is the signal that this should exist.
 
 </div>

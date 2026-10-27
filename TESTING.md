@@ -1,97 +1,132 @@
 # Testing Smriti
 
-This is the v0.1 build: a local journal with moods, a week view, and no model yet. The AI parts are intentionally off.
+This is the Tauri + Svelte + Rust prototype. No Android Studio. No emulator required.
 
-## Run it from Android Studio
+## 1. Browser preview
 
-1. Open the `Project-Smriti` folder in Android Studio.
-2. Open **Device Manager** and start the emulator. Wait until the Android home screen is visible.
-3. In the device dropdown at the top, select the Android emulator, not “Linux desktop”.
-4. Open `lib/main.dart`.
-5. Click the green **Run** button, or choose **Run 'main.dart'**.
+```sh
+npm install
+npm run dev
+```
 
-The first Gradle run can take a minute. Lines like these are warnings, not failures:
+Open `http://localhost:1420`.
+
+This is the fastest way to test the design, copy, keyboard behaviour, and layout. Data is stored in `localStorage`.
+
+## 2. Desktop shell
+
+```sh
+npm run tauri dev
+```
+
+The window is sized like a phone (420 × 900). This checks that the app works inside the Tauri webview.
+
+## 3. Android phone
+
+You need a USB data cable and USB debugging enabled on the phone.
+
+```sh
+export JAVA_HOME="$HOME/development/jdk-21"
+export ANDROID_HOME="$HOME/Android/Sdk"
+export NDK_HOME="$HOME/Android/Sdk/ndk/28.2.13676358"
+export PATH="$HOME/.cargo/bin:$ANDROID_HOME/platform-tools:$JAVA_HOME/bin:$PATH"
+
+adb devices
+npm run tauri android dev
+```
+
+If `adb devices` is empty, check the cable and the USB mode. Use **File transfer / MTP**, not charge-only.
+
+No Android Studio is needed. Tauri uses Gradle CLI under the hood.
+
+## 4. Build an APK
+
+```sh
+npm run android:apk
+```
+
+It builds and signs a debug APK at:
 
 ```text
-WARNING: A restricted method in java.lang.System has been called
+dist/Smriti-0.1.0-debug.apk
 ```
 
-Wait for the app to open. If Android Studio shows a red error, copy the lines after the Gradle warnings.
-
-## Run it from a terminal
-
-Use this only if the Android Studio emulator is already running.
+Install it with:
 
 ```sh
-export PATH="$HOME/development/flutter/bin:$HOME/Android/Sdk/platform-tools:$PATH"
-cd /home/tatsuya/Documents/Projects-2/Project-Smriti
-flutter devices
-flutter run -d emulator-5554
+adb install -r dist/Smriti-0.1.0-debug.apk
 ```
-
-## Install the built APK
-
-```sh
-export PATH="$HOME/Android/Sdk/platform-tools:$PATH"
-adb install -r build/app/outputs/flutter-apk/app-debug.apk
-```
-
-Or copy the APK to your phone and open it.
 
 ## Test pass
 
-### 1. Today
+### Onboarding
 
-- Pick a mood. The chip should tint and the label should change colour.
+- Open the app for the first time.
+- Enter a name or skip.
+- Tap **Start**.
+- Close and reopen — onboarding should not appear again.
+
+### Today
+
+- Pick a mood. It should tint.
+- Type a one-thing intention.
 - Write two or three lines.
 - Tap **Save**.
-- The entry should appear under **Lately** with the mood chip.
-- Tap **See all** to open the Journal.
+- The entry should appear under **Lately** with the mood chip and one thing.
 
-### 2. Journal
+### Journal
 
-- Check the **This week** card: entries, words, and days.
-- Check the seven circles. Days you wrote should have a tick.
-- Open an entry and delete it. Confirm the dialog.
-- The stats and list should update.
+- Check **This week**: entries, words, days.
+- Check the seven dots. Today should be ticked.
+- Search for a word from your entry.
+- Edit an entry; change the mood and text; save.
+- Delete an entry; confirm.
+- If empty, tap **See a sample week**.
 
-### 3. Weekly
+### Weekly
 
+- Check the stats and the words-per-day chart.
 - Tap **Write it up**.
-- A plain summary should appear with counts, repeated words, and the longest entry.
-- You should see the “Reflection is off” note.
-- This page does not call a model.
+- A summary should appear with counts, repeated words, and the longest entry.
+- It should end with “No model read this.”
 
-### 4. Settings
+### Stuck sheet
 
-- Change the support country. It should persist after leaving the page.
-- Tap **Copy export**, then paste somewhere to check the JSON.
-- Tap **Delete everything**. Confirm. The journal should be empty, settings should remain.
+- Tap **Stuck? Start smaller**.
+- Pick **Too big**, **Unclear**, **Boring**, **Tired**, or **Afraid**.
+- A small next step should appear.
+- No diagnosis, no lecture.
 
-### 5. Persistence
+### Focus timer
 
-- Close the app and reopen it.
-- Entries, moods, summaries, and settings should still be there.
+- Open the timer icon in the header.
+- Choose 10 or 25 minutes.
+- Start, pause, reset.
+- Let it finish or stop it. No score is saved.
 
-### 6. Edge cases
+### Settings
 
-- Empty save should stay disabled.
-- Very long text should stay inside the 12,000 character limit.
-- Switching tabs and coming back should reload the list.
+- Change the support country.
+- Change the reminder time. It saves the preference; scheduling is next.
+- Tap **Copy export**, paste somewhere, check the JSON.
+- Tap **Delete everything**, confirm. The journal should empty; settings remain.
+- Check the Rust core version in About. It says “web preview” in the browser; inside Tauri it shows the core version.
 
-## Hot reload
+### Persistence
 
-With the app running from Android Studio, save a Dart file and use the **Hot Reload** lightning icon, or press `r` in the run console.
+- Close and reopen the app.
+- Entries, moods, one-thing, summaries, name, and settings should remain.
 
 ## What is not built yet
 
-- No model is bundled or configured. AI reflection, memory extraction, and ask-your-journal are off.
-- No account, cloud sync, analytics, or network calls.
-- Safety resources are local keyword checks only. Do not use real crisis text to test.
-- iOS has a generated host but needs macOS/Xcode to run.
+- No model is included. Reflection and ask-your-journal are off.
+- Data is in `localStorage`, not encrypted SQLite yet.
+- Notifications are not scheduled yet.
+- No app lock, widget, or iOS build yet.
+- Safety resources are local keyword checks. Do not use real crisis text to test.
 
-## Current limitations
+## Reset
 
-- Data is in a local SQLite file, not encrypted yet.
-- The app is Android-first; the Rust core is not wired through FFI yet.
-- A home-screen / linking widget is on the roadmap, not in this build.
+In the browser, clear site data for `localhost:1420`.
+
+On Android, clear the app’s storage from Android settings, or use **Delete everything** in the app.
