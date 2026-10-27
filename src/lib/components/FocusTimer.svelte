@@ -62,12 +62,14 @@
 <svelte:window onkeydown={(event) => event.key === 'Escape' && onClose()} />
 
 <div class="sheet-backdrop" role="presentation" onclick={onClose}>
-  <section
+  <div
     class="sheet"
     role="dialog"
+    tabindex="-1"
     aria-modal="true"
     aria-label="Focus timer"
     onclick={(event) => event.stopPropagation()}
+    onkeydown={(event) => event.stopPropagation()}
   >
     <div class="sheet-handle"></div>
     <div class="row">
@@ -106,5 +108,5 @@
     </div>
 
     <button class="btn ghost big" onclick={onClose}>Close</button>
-  </section>
+  </div>
 </div>

@@ -37,12 +37,14 @@
 <svelte:window onkeydown={(event) => event.key === 'Escape' && onClose()} />
 
 <div class="sheet-backdrop" role="presentation" onclick={onClose}>
-  <section
+  <div
     class="sheet"
     role="dialog"
+    tabindex="-1"
     aria-modal="true"
     aria-label="Stuck"
     onclick={(event) => event.stopPropagation()}
+    onkeydown={(event) => event.stopPropagation()}
   >
     <div class="sheet-handle"></div>
     <div class="row">
@@ -75,5 +77,5 @@
     {:else}
       <button class="btn ghost big mt-3" onclick={onClose}>Not now</button>
     {/if}
-  </section>
+  </div>
 </div>

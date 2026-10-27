@@ -11,8 +11,11 @@
     onClose: () => void;
   } = $props();
 
+  // svelte-ignore state_referenced_locally
   let text = $state(entry.content);
+  // svelte-ignore state_referenced_locally
   let oneThing = $state(entry.oneThing ?? '');
+  // svelte-ignore state_referenced_locally
   let mood = $state<MoodId | undefined>(entry.mood);
 
   function save() {
@@ -32,12 +35,14 @@
   role="presentation"
   onclick={onClose}
 >
-  <section
+  <div
     class="sheet"
     role="dialog"
+    tabindex="-1"
     aria-modal="true"
     aria-label="Edit entry"
     onclick={(event) => event.stopPropagation()}
+    onkeydown={(event) => event.stopPropagation()}
   >
     <div class="sheet-handle"></div>
     <h2 class="sheet-title">Edit entry</h2>
@@ -68,5 +73,5 @@
       <div class="spacer"></div>
       <button class="btn" onclick={save} disabled={!text.trim()}>Save changes</button>
     </div>
-  </section>
+  </div>
 </div>
