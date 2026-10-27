@@ -19,11 +19,20 @@
     seedDemo,
     setSetting
   } from '$lib/state.svelte';
+  import {
+    chooseModel,
+    formatModelSize,
+    inTauri,
+    modelState,
+    refreshModel,
+    removeModel
+  } from '$lib/model.svelte';
 
   let rustVersion = $state('web preview');
   let copied = $state(false);
 
   onMount(async () => {
+    void refreshModel();
     try {
       rustVersion = await invoke<string>('core_version');
     } catch {
@@ -53,15 +62,50 @@
       <div class="settings-icon" style="--icon-color: var(--lilac)"><Brain size={19} /></div>
       <h2 class="settings-title">Model</h2>
       <div class="spacer"></div>
-      <span class="status-pill">Not set up</span>
+      <span class="status-pill">{modelState.status?.configured ? 'Ready' : 'Not set up'}</span>
     </div>
-    <p class="small">
-      You can write without a model. The reflective parts stay off until a model
-      is on your phone. Nothing is downloaded or sent anywhere.
-    </p>
-    <p class="small mt-2" style="color: var(--faint)">
-      Later: choose a local GGUF file and run it on the device. No server.
-    </p>
+
+    {#if modelState.status?.configured}
+      <p class="small" style="font-weight: 700">
+        {modelState.status.name ?? 'Local model'}
+        {#if modelState.status.size_bytes}
+          · {formatModelSize(modelState.status.size_bytes)}
+        {/if}
+      </p>
+      <p class="small mt-2">
+        The model file is registered on this phone. Local inference is the next
+        milestone; no cloud is involved.
+      </p>
+      <div class="row wrap mt-2">
+        <button class="btn soft" onclick={chooseModel} disabled={modelState.loading}>
+          Change model
+        </button>
+        <button class="btn danger" onclick={removeModel} disabled={modelState.loading}>
+          Remove
+        </button>
+      </div>
+    {:else}
+      <p class="small">
+        Pick a GGUF model stored on this phone. Writing works without one, and
+        nothing is downloaded or sent anywhere.
+      </p>
+      <button class="btn soft mt-2" onclick={chooseModel} disabled={modelState.loading || !inTauri()}>
+        {modelState.loading ? 'Opening…' : 'Choose model file'}
+      </button>
+      {#if !inTauri()}
+        <p class="small mt-2" style="color: var(--faint)">
+          File picker is available in the Android app. Browser preview cannot
+          read model files.
+        </p>
+      {/if}
+      <p class="small mt-2" style="color: var(--faint)">
+        Local inference runs on the device. No server, no upload.
+      </p>
+    {/if}
+
+    {#if modelState.error}
+      <p class="small mt-2" style="color: var(--danger)">{modelState.error}</p>
+    {/if}
   </div>
 
   <div class="settings-card sage">

@@ -1,3 +1,5 @@
+mod model;
+
 #[tauri::command]
 fn core_version() -> String {
     smriti_core::version().to_string()
@@ -12,7 +14,14 @@ fn decay_score(importance: f64, days: f64, half_life_days: f64) -> f64 {
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![core_version, decay_score])
+        .plugin(tauri_plugin_dialog::init())
+        .invoke_handler(tauri::generate_handler![
+            core_version,
+            decay_score,
+            model::model_status,
+            model::set_model_path,
+            model::clear_model
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -16,6 +16,8 @@
   // svelte-ignore state_referenced_locally
   let oneThing = $state(entry.oneThing ?? '');
   // svelte-ignore state_referenced_locally
+  let win = $state(entry.win ?? '');
+  // svelte-ignore state_referenced_locally
   let mood = $state<MoodId | undefined>(entry.mood);
 
   function save() {
@@ -24,6 +26,7 @@
     updateEntry(entry.id, {
       content: value,
       oneThing: oneThing.trim() || undefined,
+      win: win.trim() || undefined,
       mood
     });
     onClose();
@@ -66,6 +69,14 @@
       maxlength="120"
       placeholder="One thing that would make today feel okay"
       aria-label="One thing"
+    />
+
+    <input
+      class="field mt-2"
+      bind:value={win}
+      maxlength="120"
+      placeholder="One tiny win"
+      aria-label="One tiny win"
     />
 
     <div class="row mt-3">

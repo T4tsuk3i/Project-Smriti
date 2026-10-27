@@ -104,6 +104,14 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 - Start, pause, reset.
 - Let it finish or stop it. No score is saved.
 
+### Model
+
+- In the Android app, open **Settings → Model → Choose model file**.
+- Pick a local `.gguf` file.
+- The card should show the file name and size.
+- Pick **Remove** and confirm it returns to “Not set up”.
+- In the browser preview this button is disabled; browser preview cannot read local model files.
+
 ### Settings
 
 - Change the support country.
@@ -119,7 +127,7 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 
 ## What is not built yet
 
-- No model is included. Reflection and ask-your-journal are off.
+- No model is included. A GGUF file can be registered, but inference and reflection are not wired yet.
 - Data is in `localStorage`, not encrypted SQLite yet.
 - Notifications are not scheduled yet.
 - No app lock, widget, or iOS build yet.

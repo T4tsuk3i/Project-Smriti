@@ -8,6 +8,7 @@ export interface Entry {
   createdAt: string;
   mood?: MoodId;
   oneThing?: string;
+  win?: string;
 }
 
 export interface Letter {

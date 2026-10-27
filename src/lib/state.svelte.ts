@@ -61,13 +61,15 @@ export function addEntry(input: {
   content: string;
   mood?: MoodId;
   oneThing?: string;
+  win?: string;
 }): Entry {
   const entry: Entry = {
     id: id(),
     content: input.content,
     createdAt: new Date().toISOString(),
     mood: input.mood,
-    oneThing: input.oneThing?.trim() || undefined
+    oneThing: input.oneThing?.trim() || undefined,
+    win: input.win?.trim() || undefined
   };
   app.entries = [entry, ...app.entries];
   persist();
@@ -76,7 +78,7 @@ export function addEntry(input: {
 
 export function updateEntry(
   entryId: string,
-  patch: Partial<Pick<Entry, 'content' | 'mood' | 'oneThing'>>
+  patch: Partial<Pick<Entry, 'content' | 'mood' | 'oneThing' | 'win'>>
 ) {
   app.entries = app.entries.map((entry) =>
     entry.id === entryId ? { ...entry, ...patch } : entry
@@ -143,7 +145,8 @@ export function seedDemo() {
         'Work was fine until the afternoon. I kept opening the invoice tab and closing it again. Went for a walk at six; that helped more than I expected.',
       createdAt: new Date(now - 2 * 60 * 60 * 1000).toISOString(),
       mood: 'low',
-      oneThing: 'Send one invoice'
+      oneThing: 'Send one invoice',
+      win: 'Opened the invoice'
     },
     {
       id: id(),
@@ -151,7 +154,8 @@ export function seedDemo() {
         'Slept badly. Did the small version of the thing instead of the big version. It still counted.',
       createdAt: new Date(now - day).toISOString(),
       mood: 'okay',
-      oneThing: 'Ten minutes on the deck'
+      oneThing: 'Ten minutes on the deck',
+      win: 'Did the small version'
     },
     {
       id: id(),
@@ -159,7 +163,8 @@ export function seedDemo() {
         'Good day. Walked before noon, ate lunch away from the desk, and the invoice finally went out.',
       createdAt: new Date(now - 2 * day).toISOString(),
       mood: 'good',
-      oneThing: 'Invoice after the walk'
+      oneThing: 'Invoice after the walk',
+      win: 'Invoice sent'
     }
   ];
   persist();

@@ -36,13 +36,16 @@ Built solo by someone with ADHD. Not medical care. Just the thing that helped me
 - Focus timer: 10 or 25 minutes, no score
 - Settings: support country, reminder preference, export, delete everything
 - Local safety notice with country helplines
+- Model file picker + GGUF registry (inference runtime next)
 - Sample week for testing the design
 
 Data is currently stored in `localStorage` so the design can be tested in a browser. SQLite comes next.
 
+A local GGUF file can already be selected and registered. The inference runtime is the next milestone.
+
 ## Not built yet
 
-- No model is bundled or configured. Reflection and ask-your-journal are off.
+- No model is bundled. A GGUF file can be registered, but inference and reflection are not wired yet.
 - No SQLite/Rust persistence yet
 - No scheduled notifications yet
 - No app lock or encryption yet
@@ -79,7 +82,7 @@ Palette: cream paper, white cards, burnt orange, sage, butter, lilac. Bold sans 
 | Core | Rust (`rust/` + `src-tauri/`) |
 | Data (now) | `localStorage` prototype |
 | Data (next) | SQLite in Rust |
-| AI (next) | Local GGUF via llama.cpp, no cloud |
+| AI (next) | Local GGUF registry; llama.cpp runtime next, no cloud |
 | Build | `cargo`/`npm tauri` + Gradle CLI |
 | Android Studio | Not required |
 
@@ -164,7 +167,7 @@ The app shows local resources when it detects language that may need care. It ca
 
 - **v0.2 — Real storage.** SQLite in Rust, migrations, encrypted database.
 - **v0.3 — Fits the day.** Notifications, app lock, home-screen widget, share target.
-- **v0.4 — On-device model.** Model picker, llama.cpp, memory extraction, weekly letter, ask.
+- **v0.4 — On-device model.** Wire the registered GGUF to llama.cpp, memory extraction, weekly letter, ask.
 - **v0.5 — Trust.** Safety classifier, trusted contact, export/import.
 - **v1.0 — iOS.** Tauri iOS build, requires macOS + Xcode.
 

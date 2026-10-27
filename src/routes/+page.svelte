@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { Lock, Timer } from 'lucide-svelte';
   import FocusTimer from '$lib/components/FocusTimer.svelte';
   import Journal from '$lib/components/Journal.svelte';
@@ -9,6 +10,7 @@
   import Today from '$lib/components/Today.svelte';
   import Weekly from '$lib/components/Weekly.svelte';
   import { app } from '$lib/state.svelte';
+  import { refreshModel } from '$lib/model.svelte';
   import type { Tab } from '$lib/types';
 
   let tab = $state<Tab>('today');
@@ -16,6 +18,10 @@
   let showFocus = $state(false);
   let showOnboarding = $state(!app.settings.onboarded);
   let mainEl = $state<HTMLElement | null>(null);
+
+  onMount(() => {
+    void refreshModel();
+  });
 
   function go(next: Tab) {
     tab = next;
@@ -44,6 +50,7 @@
         onOpenJournal={() => go('journal')}
         onOpenSettings={() => go('settings')}
         onStuck={() => (showStuck = true)}
+        onFocus={() => (showFocus = true)}
       />
     {:else if tab === 'journal'}
       <Journal />

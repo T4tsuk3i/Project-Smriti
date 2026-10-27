@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Pencil, Target, Trash2 } from 'lucide-svelte';
+  import { Pencil, Sparkles, Target, Trash2 } from 'lucide-svelte';
   import { moodById } from '$lib/moods';
   import type { Entry } from '$lib/types';
   import { formatShortDate, formatTime } from '$lib/weekly';
@@ -52,6 +52,13 @@
     <p class="entry-one-thing">
       <Target size={13} />
       One thing: {entry.oneThing}
+    </p>
+  {/if}
+
+  {#if entry.win}
+    <p class="entry-one-thing" style="color: var(--sage)">
+      <Sparkles size={13} />
+      Tiny win: {entry.win}
     </p>
   {/if}
 </article>
