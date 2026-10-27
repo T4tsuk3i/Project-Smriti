@@ -50,3 +50,7 @@ src-tauri/gen/android/tauri.settings.gradle
 
 # Local APK output
 /dist/
+
+# Speech plugin build artifacts
+plugins/speech/target/
+plugins/speech/dist-js/

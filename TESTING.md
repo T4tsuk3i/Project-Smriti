@@ -66,13 +66,15 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 - Tap **Start**.
 - Close and reopen — onboarding should not appear again.
 
-### Today
+### Voice check-in
 
-- Pick a mood. It should tint.
-- Type two or three lines in the single writing box.
-- Tap **Save**.
+- On Android, tap the big mic and allow microphone permission.
+- Speak one sentence. Partial text should appear.
+- Answer two or three questions using voice or the chips/type fallback.
+- At the end, tap **Save to journal**.
 - The entry should appear under **Lately**.
-- Optional: tap **One thing** or **Tiny win** to reveal an input. Tap **Stuck** for the smaller-step sheet.
+- In the browser, voice is unavailable; use the text/chip fallback.
+- The app uses Android's built-in speech recognition. If the device has no recognition service, test the type fallback and report the error.
 
 ### Journal
 
@@ -90,13 +92,6 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 - A summary should appear with counts, repeated words, and the longest entry.
 - It should end with “No model read this.”
 
-### Stuck sheet
-
-- Tap **Stuck? Start smaller**.
-- Pick **Too big**, **Unclear**, **Boring**, **Tired**, or **Afraid**.
-- A small next step should appear.
-- No diagnosis, no lecture.
-
 ### Focus timer
 
 - Open the timer icon in the header.
@@ -106,11 +101,11 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 
 ### Model
 
-- In the Android app, open **Settings → Model → Choose model file**.
-- Pick a local `.gguf` file.
-- The card should show the file name and size.
-- Pick **Remove** and confirm it returns to “Not set up”.
-- In the browser preview this button is disabled; browser preview cannot read local model files.
+- Open **Settings → Model**.
+- **On this phone:** choose a local `.gguf` file, see its name/size, then remove it.
+- **PC / API:** enter the endpoint (e.g. `http://192.168.0.106:8080/v1`), model name, optional key, then tap **Test**.
+- A successful test should say “Connected. The model replied.”
+- In the browser preview the file picker is disabled; API test is also app-only.
 
 ### Settings
 
@@ -128,10 +123,10 @@ adb install -r dist/Smriti-0.1.0-debug.apk
 
 ## What is not built yet
 
-- No model is included. A GGUF file can be registered, but inference and reflection are not wired yet.
+- No model is included. A GGUF file or PC/API endpoint can be configured, but generation/reflection is not wired yet.
 - Data is in `localStorage`, not encrypted SQLite yet.
-- Notifications are not scheduled yet.
 - No app lock, widget, or iOS build yet.
+- Voice uses Android's built-in speech recognition; some devices may send audio to Google. A fully local Whisper fallback is planned.
 - Safety resources are local keyword checks. Do not use real crisis text to test.
 
 ## Reset

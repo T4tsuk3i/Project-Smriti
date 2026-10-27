@@ -36,8 +36,9 @@ Built solo by someone with ADHD. Not medical care. Just the thing that helped me
 - Focus timer: 10 or 25 minutes, no score
 - Settings: daily reminder + Sunday nudge, support country, export, delete everything
 - Local safety notice with country helplines
+- Voice-first guided check-ins using Android speech recognition
 - Daily + Sunday notifications
-- Model file picker + GGUF registry (inference runtime next)
+- Model picker: local GGUF or PC/API endpoint (test connection)
 - Sample week for testing the design
 
 Data is currently stored in `localStorage` so the design can be tested in a browser. SQLite comes next.
@@ -46,7 +47,8 @@ A local GGUF file can already be selected and registered. The inference runtime 
 
 ## Not built yet
 
-- No model is bundled. A GGUF file can be registered, but inference and reflection are not wired yet.
+- No model is bundled. A GGUF file or PC/API endpoint can be configured. Follow-up generation is not wired yet.
+- Voice uses Android's built-in speech recognition. On some devices that may send audio to Google; a fully local Whisper fallback is planned.
 - No SQLite/Rust persistence yet
 - No app lock or encryption yet
 - No home-screen widget yet
@@ -82,7 +84,7 @@ Palette: cream paper, white cards, burnt orange, sage, butter, lilac. Bold sans 
 | Core | Rust (`rust/` + `src-tauri/`) |
 | Data (now) | `localStorage` prototype |
 | Data (next) | SQLite in Rust |
-| AI (next) | Local GGUF registry; llama.cpp runtime next, no cloud |
+| AI | Local GGUF registry or PC/API endpoint; generation runtime next |
 | Build | `cargo`/`npm tauri` + Gradle CLI |
 | Android Studio | Not required |
 
@@ -141,6 +143,32 @@ cargo test
 For the first test pass, see [TESTING.md](TESTING.md).
 
 ---
+
+## Connect your PC model
+
+Settings → Model → **PC / API**:
+
+```text
+Endpoint: http://YOUR_PC_LAN_IP:8080/v1
+Model:    the server alias
+API key:  leave blank for local
+```
+
+Start llama.cpp on your PC with a LAN-visible host:
+
+```sh
+llama-server -m /path/to/model.gguf --host 0.0.0.0 --port 8080 --alias smriti
+```
+
+Then open the firewall port for your phone, or use a trusted local network:
+
+```sh
+sudo firewall-cmd --add-port=8080/tcp
+```
+
+The app allows cleartext HTTP only for local-network endpoints. Test the connection from Settings before using it.
+
+Android voice input uses the system speech recognizer. Depending on the device, that may send audio to Google. A fully local Whisper fallback is planned.
 
 ## Privacy
 

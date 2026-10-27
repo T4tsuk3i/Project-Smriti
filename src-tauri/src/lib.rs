@@ -16,11 +16,14 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
+        .plugin(tauri_plugin_speech::init())
         .invoke_handler(tauri::generate_handler![
             core_version,
             decay_score,
             model::model_status,
             model::set_model_path,
+            model::set_api_model,
+            model::test_api_model,
             model::clear_model
         ])
         .run(tauri::generate_context!())

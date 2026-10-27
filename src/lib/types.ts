@@ -1,5 +1,7 @@
 export type Tab = 'today' | 'journal' | 'weekly' | 'settings';
 
+export type VoiceIntent = 'talk' | 'stuck' | 'remember' | 'winddown';
+
 export type MoodId = 'good' | 'okay' | 'low' | 'heavy' | 'numb';
 
 export interface Entry {

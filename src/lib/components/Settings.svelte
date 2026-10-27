@@ -25,7 +25,9 @@
     inTauri,
     modelState,
     refreshModel,
-    removeModel
+    removeModel,
+    saveApiModel,
+    testApiModel
   } from '$lib/model.svelte';
   import {
     clearReminders,
@@ -36,9 +38,20 @@
 
   let rustVersion = $state('web preview');
   let copied = $state(false);
+  let modelMode = $state<'edge' | 'api'>('edge');
+  let apiBase = $state('');
+  let apiModel = $state('');
+  let apiKey = $state('');
+  let apiMessage = $state('');
+  let apiTesting = $state(false);
 
   onMount(async () => {
-    void refreshModel();
+    const status = await refreshModel();
+    if (status?.provider === 'api') {
+      modelMode = 'api';
+      apiBase = status.base_url ?? '';
+      apiModel = status.model ?? '';
+    }
     void refreshReminderState();
     try {
       rustVersion = await invoke<string>('core_version');
@@ -46,6 +59,27 @@
       rustVersion = 'web preview';
     }
   });
+
+  async function saveApi() {
+    apiMessage = '';
+    const status = await saveApiModel(apiBase, apiModel, apiKey);
+    if (status) {
+      apiKey = '';
+      apiMessage = 'Saved.';
+    }
+  }
+
+  async function testApi() {
+    apiTesting = true;
+    apiMessage = '';
+    try {
+      apiMessage = await testApiModel(apiBase, apiModel, apiKey);
+    } catch (error) {
+      apiMessage = error instanceof Error ? error.message : String(error);
+    } finally {
+      apiTesting = false;
+    }
+  }
 
   async function setReminder(value: string) {
     setSetting('reminderTime', value);
@@ -78,42 +112,85 @@
       <span class="status-pill">{modelState.status?.configured ? 'Ready' : 'Not set up'}</span>
     </div>
 
-    {#if modelState.status?.configured}
-      <p class="small" style="font-weight: 700">
-        {modelState.status.name ?? 'Local model'}
-        {#if modelState.status.size_bytes}
-          · {formatModelSize(modelState.status.size_bytes)}
-        {/if}
-      </p>
-      <p class="small mt-2">
-        The model file is registered on this phone. Local inference is the next
-        milestone; no cloud is involved.
-      </p>
-      <div class="row wrap mt-2">
-        <button class="btn soft" onclick={chooseModel} disabled={modelState.loading}>
-          Change model
-        </button>
-        <button class="btn danger" onclick={removeModel} disabled={modelState.loading}>
-          Remove
-        </button>
-      </div>
-    {:else}
-      <p class="small">
-        Pick a GGUF model stored on this phone. Writing works without one, and
-        nothing is downloaded or sent anywhere.
-      </p>
-      <button class="btn soft mt-2" onclick={chooseModel} disabled={modelState.loading || !inTauri()}>
-        {modelState.loading ? 'Opening…' : 'Choose model file'}
+    <div class="segmented model-mode">
+      <button class:active={modelMode === 'edge'} onclick={() => (modelMode = 'edge')}>
+        On this phone
       </button>
-      {#if !inTauri()}
+      <button class:active={modelMode === 'api'} onclick={() => (modelMode = 'api')}>
+        PC / API
+      </button>
+    </div>
+
+    {#if modelMode === 'edge'}
+      {#if modelState.status?.provider === 'edge' && modelState.status.configured}
+        <p class="small mt-3" style="font-weight: 700">
+          {modelState.status.name ?? 'Local model'}
+          {#if modelState.status.size_bytes}
+            · {formatModelSize(modelState.status.size_bytes)}
+          {/if}
+        </p>
+        <p class="small mt-2">GGUF file registered. Inference runtime is next.</p>
+        <div class="row wrap mt-2">
+          <button class="btn soft" onclick={chooseModel} disabled={modelState.loading}>
+            Change model
+          </button>
+          <button class="btn danger" onclick={removeModel} disabled={modelState.loading}>
+            Remove
+          </button>
+        </div>
+      {:else}
+        <p class="small mt-3">
+          Pick a GGUF model stored on this phone. Nothing is uploaded.
+        </p>
+        <button class="btn soft mt-2" onclick={chooseModel} disabled={modelState.loading || !inTauri()}>
+          {modelState.loading ? 'Opening…' : 'Choose model file'}
+        </button>
+        {#if !inTauri()}
+          <p class="small mt-2" style="color: var(--faint)">
+            File picker is available in the Android app. Browser preview cannot
+            read model files.
+          </p>
+        {/if}
         <p class="small mt-2" style="color: var(--faint)">
-          File picker is available in the Android app. Browser preview cannot
-          read model files.
+          The file stays on the device. Inference will run locally.
         </p>
       {/if}
+    {:else}
+      <p class="small mt-3">
+        Connect to the model server on your PC. OpenAI-compatible endpoint.
+      </p>
+      <div class="stack mt-2">
+        <label class="field-label">
+          <span>Endpoint</span>
+          <input class="field" bind:value={apiBase} placeholder="http://192.168.0.106:8080/v1" />
+        </label>
+        <label class="field-label">
+          <span>Model name</span>
+          <input class="field" bind:value={apiModel} placeholder="qwen2.5-7b" />
+        </label>
+        <label class="field-label">
+          <span>API key (optional)</span>
+          <input class="field" type="password" bind:value={apiKey} placeholder="Leave blank for local" />
+        </label>
+      </div>
+      <div class="row wrap mt-2">
+        <button class="btn soft" onclick={saveApi} disabled={modelState.loading}>
+          Save
+        </button>
+        <button class="btn ghost" onclick={testApi} disabled={apiTesting || !apiBase || !apiModel}>
+          {apiTesting ? 'Testing…' : 'Test'}
+        </button>
+        {#if modelState.status?.provider === 'api' && modelState.status.configured}
+          <button class="btn danger" onclick={removeModel} disabled={modelState.loading}>
+            Remove
+          </button>
+        {/if}
+      </div>
+      {#if apiMessage}
+        <p class="small mt-2" style="color: var(--muted)">{apiMessage}</p>
+      {/if}
       <p class="small mt-2" style="color: var(--faint)">
-        The file stays on the device. Inference will run locally; no server, no
-        upload.
+        Cleartext HTTP is allowed for local network endpoints only.
       </p>
     {/if}
 

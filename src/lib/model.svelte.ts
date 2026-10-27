@@ -3,9 +3,13 @@ import { open } from '@tauri-apps/plugin-dialog';
 
 export interface ModelStatus {
   configured: boolean;
+  provider: 'edge' | 'api' | 'none';
   path?: string | null;
   name?: string | null;
   size_bytes?: number | null;
+  base_url?: string | null;
+  model?: string | null;
+  has_api_key: boolean;
   message: string;
 }
 
@@ -66,6 +70,44 @@ export async function chooseModel(): Promise<ModelStatus | null> {
   } finally {
     modelState.loading = false;
   }
+}
+
+export async function saveApiModel(
+  baseUrl: string,
+  model: string,
+  apiKey: string
+): Promise<ModelStatus | null> {
+  if (!inTauri()) return null;
+
+  modelState.loading = true;
+  modelState.error = '';
+  try {
+    const status = await invoke<ModelStatus>('set_api_model', {
+      baseUrl,
+      model,
+      apiKey: apiKey.trim() || null
+    });
+    modelState.status = status;
+    return status;
+  } catch (error) {
+    modelState.error = error instanceof Error ? error.message : String(error);
+    return null;
+  } finally {
+    modelState.loading = false;
+  }
+}
+
+export async function testApiModel(
+  baseUrl: string,
+  model: string,
+  apiKey: string
+): Promise<string> {
+  if (!inTauri()) return 'API test is available in the Android app.';
+  return await invoke<string>('test_api_model', {
+    baseUrl,
+    model,
+    apiKey: apiKey.trim() || null
+  });
 }
 
 export async function removeModel(): Promise<ModelStatus | null> {

@@ -18,7 +18,7 @@ android {
     compileSdk = 37
     namespace = "com.t4tsuk3i.smriti"
     defaultConfig {
-        manifestPlaceholders["usesCleartextTraffic"] = "false"
+        manifestPlaceholders["usesCleartextTraffic"] = "true"
         applicationId = "com.t4tsuk3i.smriti"
         minSdk = 24
         targetSdk = 37

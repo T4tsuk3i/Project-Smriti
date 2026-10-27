@@ -84,3 +84,28 @@ export async function refreshReminderState(): Promise<void> {
     reminderState.enabled = false;
   }
 }
+
+
+export async function scheduleOneOff(
+  title: string,
+  body: string,
+  date: Date
+): Promise<boolean> {
+  if (!inTauri()) return false;
+
+  let granted = await isPermissionGranted();
+  if (!granted) {
+    granted = (await requestPermission()) === 'granted';
+  }
+  if (!granted) {
+    reminderState.error = 'Notifications are blocked. Enable them in Android settings.';
+    return false;
+  }
+
+  sendNotification({
+    title,
+    body,
+    schedule: Schedule.at(date, false, true)
+  });
+  return true;
+}

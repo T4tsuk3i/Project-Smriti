@@ -6,7 +6,6 @@
   import Nav from '$lib/components/Nav.svelte';
   import Onboarding from '$lib/components/Onboarding.svelte';
   import Settings from '$lib/components/Settings.svelte';
-  import StuckSheet from '$lib/components/StuckSheet.svelte';
   import Today from '$lib/components/Today.svelte';
   import Weekly from '$lib/components/Weekly.svelte';
   import { app } from '$lib/state.svelte';
@@ -14,7 +13,6 @@
   import type { Tab } from '$lib/types';
 
   let tab = $state<Tab>('today');
-  let showStuck = $state(false);
   let showFocus = $state(false);
   let showOnboarding = $state(!app.settings.onboarded);
   let mainEl = $state<HTMLElement | null>(null);
@@ -49,7 +47,6 @@
       <Today
         onOpenJournal={() => go('journal')}
         onOpenSettings={() => go('settings')}
-        onStuck={() => (showStuck = true)}
         onOpenWeekly={() => go('weekly')}
       />
     {:else if tab === 'journal'}
@@ -65,10 +62,6 @@
     <Nav active={tab} onChange={go} />
   </div>
 </div>
-
-{#if showStuck}
-  <StuckSheet onClose={() => (showStuck = false)} />
-{/if}
 
 {#if showFocus}
   <FocusTimer onClose={() => (showFocus = false)} />
