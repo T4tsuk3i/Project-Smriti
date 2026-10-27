@@ -1,0 +1,13 @@
+[package]
+name = "smriti_core"
+version = "0.1.0"
+edition = "2024"
+description = "Local-first journal core for Smriti"
+license = "MIT"
+
+[lib]
+crate-type = ["cdylib", "staticlib", "rlib"]
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
