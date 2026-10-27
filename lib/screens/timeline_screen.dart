@@ -39,9 +39,9 @@ class _TimelineScreenState extends State<TimelineScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surfaceHigh,
+        backgroundColor: AppColors.paperRaised,
         title: const Text('Delete this entry?'),
-        content: const Text('This cannot be undone.'),
+        content: const Text('It will not come back.'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -61,45 +61,33 @@ class _TimelineScreenState extends State<TimelineScreen> {
     await _load();
     if (!mounted) return;
     ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text('Entry deleted.')));
+        .showSnackBar(const SnackBar(content: Text('Deleted.')));
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
+      padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
       children: [
         PageHeader(
-          eyebrow: 'Everything you wrote',
-          title: 'Timeline',
+          title: 'Journal',
           subtitle: _loading
-              ? 'Loading your entries…'
-              : '${_entries.length} ${_entries.length == 1 ? 'entry' : 'entries'} on this phone. No feed, no audience.',
+              ? 'Loading…'
+              : '${_entries.length} ${_entries.length == 1 ? 'entry' : 'entries'}, newest first.',
         ),
         if (_loading)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: LinearProgressIndicator(minHeight: 1),
           )
         else if (_entries.isEmpty)
           const EmptyState(
-            title: 'No entries yet.',
-            body: 'Start with today. Write a check-in, then come back.',
-            icon: Icons.timeline,
+            title: 'Nothing yet.',
+            body: 'Write a check-in first. One line is enough.',
           )
-        else ...[
-          Text(
-            'Newest first',
-            style: theme.textTheme.bodySmall?.copyWith(color: AppColors.faint),
-          ),
-          const SizedBox(height: 10),
+        else
           for (final entry in _entries)
             EntryCard(entry: entry, onDelete: () => _delete(entry)),
-        ],
       ],
     );
   }

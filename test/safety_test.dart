@@ -42,11 +42,14 @@ void main() {
       final summary = WeeklySummaryService.build(entries);
       expect(summary, contains('2 times'));
       expect(summary, contains('walk'));
-      expect(summary, contains('local summary'));
+      expect(summary, contains('No model read this'));
     });
 
     test('handles an empty week', () {
-      expect(WeeklySummaryService.build(const []), contains('No check-ins'));
+      expect(
+        WeeklySummaryService.build(const []),
+        contains('Nothing to sum up'),
+      );
     });
   });
 }

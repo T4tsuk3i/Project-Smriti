@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../app_theme.dart';
 import '../data/journal_repository.dart';
@@ -12,10 +13,16 @@ import '../widgets/page_header.dart';
 import '../widgets/safety_notice.dart';
 
 class TodayScreen extends StatefulWidget {
-  const TodayScreen({super.key, required this.repository, this.onOpenSettings});
+  const TodayScreen({
+    super.key,
+    required this.repository,
+    this.onOpenSettings,
+    this.onOpenJournal,
+  });
 
   final JournalRepository repository;
   final VoidCallback? onOpenSettings;
+  final VoidCallback? onOpenJournal;
 
   @override
   State<TodayScreen> createState() => _TodayScreenState();
@@ -42,12 +49,18 @@ class _TodayScreenState extends State<TodayScreen> {
   }
 
   Future<void> _load() async {
-    final entries = await widget.repository.recentEntries(limit: 5);
+    final entries = await widget.repository.recentEntries(limit: 4);
     if (!mounted) return;
     setState(() {
       _entries = entries;
       _loading = false;
     });
+  }
+
+  int get _wordCount {
+    final text = _controller.text.trim();
+    if (text.isEmpty) return 0;
+    return text.split(RegExp(r'\s+')).where((word) => word.isNotEmpty).length;
   }
 
   Future<void> _save() async {
@@ -73,11 +86,11 @@ class _TodayScreenState extends State<TodayScreen> {
         _safety = check.flagged ? check : null;
       });
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Saved locally.')));
+          .showSnackBar(const SnackBar(content: Text('Saved.')));
     } catch (error) {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Could not save: $error')));
+          .showSnackBar(SnackBar(content: Text('Could not save. $error')));
     } finally {
       if (mounted) {
         setState(() => _saving = false);
@@ -88,99 +101,89 @@ class _TodayScreenState extends State<TodayScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final today = DateFormat('EEEE, d MMMM').format(DateTime.now());
     final hasText = _controller.text.trim().isNotEmpty;
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
+      padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
       physics: const AlwaysScrollableScrollPhysics(),
       children: [
         PageHeader(
-          eyebrow: 'A quiet place that remembers',
-          title: 'How did today actually go?',
+          eyebrow: today,
+          title: 'What happened today?',
           subtitle:
-              'A short check-in, no audience. Smriti keeps it on this phone.',
+              'A few lines is enough. It does not have to make sense yet.',
         ),
         ModelNotice(onOpenSettings: widget.onOpenSettings),
         Container(
-          padding: const EdgeInsets.all(18),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(22),
-            border: Border.all(color: AppColors.border),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(color: AppColors.line),
+              bottom: BorderSide(color: AppColors.line),
+            ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("TODAY'S CHECK-IN", style: theme.textTheme.labelSmall),
-              const SizedBox(height: 10),
-              TextField(
-                controller: _controller,
-                minLines: 7,
-                maxLines: 12,
-                maxLength: 12000,
-                textCapitalization: TextCapitalization.sentences,
-                onChanged: (_) => setState(() {}),
-                decoration: const InputDecoration(
-                  hintText: 'What happened? What did you avoid? What did you get through?\n\nNo performance needed.',
-                  counterText: '',
-                  border: InputBorder.none,
-                  filled: false,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  height: 1.65,
-                  fontSize: 16,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      '${_controller.text.length} / 12000 · local only',
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: AppColors.faint,
-                        fontSize: 11.5,
-                      ),
-                    ),
-                  ),
-                  FilledButton(
-                    onPressed: hasText && !_saving ? _save : null,
-                    child: Text(_saving ? 'Saving…' : 'Save check-in'),
-                  ),
-                ],
-              ),
-            ],
+          child: TextField(
+            controller: _controller,
+            minLines: 8,
+            maxLines: 14,
+            maxLength: 12000,
+            textCapitalization: TextCapitalization.sentences,
+            onChanged: (_) => setState(() {}),
+            decoration: const InputDecoration(
+              hintText: 'Start anywhere.',
+              counterText: '',
+              border: InputBorder.none,
+              filled: false,
+              contentPadding: EdgeInsets.zero,
+            ),
+            style: theme.textTheme.bodyMedium?.copyWith(
+              height: 1.7,
+              fontSize: 16,
+              color: AppColors.ink,
+            ),
           ),
         ),
-        if (_safety != null) SafetyNotice(check: _safety!),
-        const SizedBox(height: 28),
+        const SizedBox(height: 12),
         Row(
           children: [
-            Text('Recent', style: theme.textTheme.headlineSmall),
+            Text(
+              '$_wordCount ${_wordCount == 1 ? 'word' : 'words'}',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.faint,
+                fontSize: 12,
+              ),
+            ),
             const Spacer(),
-            if (_entries.isNotEmpty)
-              Text(
-                '${_entries.length}',
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: AppColors.faint,
-                ),
+            FilledButton(
+              onPressed: hasText && !_saving ? _save : null,
+              child: Text(_saving ? 'Saving…' : 'Save'),
+            ),
+          ],
+        ),
+        if (_safety != null) SafetyNotice(check: _safety!),
+        const SizedBox(height: 30),
+        Row(
+          children: [
+            Text('Earlier', style: theme.textTheme.headlineSmall),
+            const Spacer(),
+            if (_entries.isNotEmpty && widget.onOpenJournal != null)
+              TextButton(
+                onPressed: widget.onOpenJournal,
+                child: const Text('All entries'),
               ),
           ],
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 4),
         if (_loading)
-          const Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 24),
+            child: LinearProgressIndicator(minHeight: 1),
           )
         else if (_entries.isEmpty)
           const EmptyState(
-            title: 'Nothing here yet.',
-            body: 'Write the first check-in. It does not have to be good.',
-            icon: Icons.edit_note,
+            title: 'Nothing yet.',
+            body: 'Write the first one. One line counts.',
           )
         else
           for (final entry in _entries) EntryCard(entry: entry),

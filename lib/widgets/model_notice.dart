@@ -13,60 +13,38 @@ class ModelNotice extends StatelessWidget {
     final theme = Theme.of(context);
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 18),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.07),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.25)),
+      margin: const EdgeInsets.only(bottom: 22),
+      padding: const EdgeInsets.only(left: 12),
+      decoration: const BoxDecoration(
+        border: Border(left: BorderSide(color: AppColors.olive, width: 2)),
       ),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 2),
-            child: Icon(
-              Icons.memory_outlined,
-              size: 20,
-              color: AppColors.warning,
+          Text(
+            ModelService.label,
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.w600,
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  ModelService.label,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: AppColors.warning,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Journaling works now. AI reflection stays off until a local '
-                  'model is configured.',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: AppColors.muted,
-                    height: 1.45,
-                  ),
-                ),
-                if (onOpenSettings != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: TextButton(
-                      onPressed: onOpenSettings,
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: const Size(0, 32),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: const Text('Settings →'),
-                    ),
-                  ),
-              ],
-            ),
+          const SizedBox(height: 3),
+          Text(
+            'You can write now. Reflection stays off until a model is set up.',
+            style: theme.textTheme.bodySmall,
           ),
+          if (onOpenSettings != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 2),
+              child: TextButton(
+                onPressed: onOpenSettings,
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  minimumSize: const Size(0, 30),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text('Details'),
+              ),
+            ),
         ],
       ),
     );

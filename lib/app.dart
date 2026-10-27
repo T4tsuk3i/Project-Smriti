@@ -15,8 +15,7 @@ class SmritiApp extends StatelessWidget {
       title: 'Smriti',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
-      darkTheme: buildAppTheme(),
-      themeMode: ThemeMode.dark,
+      themeMode: ThemeMode.light,
       home: HomeShell(repository: repository),
     );
   }

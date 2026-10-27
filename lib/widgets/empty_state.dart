@@ -7,7 +7,7 @@ class EmptyState extends StatelessWidget {
     super.key,
     required this.title,
     required this.body,
-    this.icon = Icons.auto_awesome_outlined,
+    this.icon = Icons.edit_note,
   });
 
   final String title;
@@ -17,28 +17,16 @@ class EmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 34),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 26),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.faint, size: 28),
-          const SizedBox(height: 12),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.headlineSmall,
-          ),
-          const SizedBox(height: 6),
-          Text(
-            body,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodySmall,
-          ),
+          Icon(icon, color: AppColors.faint, size: 24),
+          const SizedBox(height: 10),
+          Text(title, style: theme.textTheme.headlineSmall),
+          const SizedBox(height: 4),
+          Text(body, style: theme.textTheme.bodySmall),
         ],
       ),
     );

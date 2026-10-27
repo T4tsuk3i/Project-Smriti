@@ -55,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     await Clipboard.setData(ClipboardData(text: text));
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Export JSON copied to clipboard.')),
+      const SnackBar(content: Text('Copied. Paste it somewhere safe.')),
     );
   }
 
@@ -63,11 +63,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.surfaceHigh,
-        title: const Text('Delete all journal data?'),
+        backgroundColor: AppColors.paperRaised,
+        title: const Text('Delete everything?'),
         content: const Text(
-          'Every entry and letter on this phone will be removed. '
-          'This cannot be undone. Settings are kept.',
+          'Every entry and summary on this phone will be gone. '
+          'Settings stay. This cannot be undone.',
         ),
         actions: [
           TextButton(
@@ -90,7 +90,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await _load();
       if (!mounted) return;
       ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text('Journal data deleted.')));
+          .showSnackBar(const SnackBar(content: Text('Deleted.')));
     } finally {
       if (mounted) setState(() => _clearing = false);
     }
@@ -101,72 +101,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final theme = Theme.of(context);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
+      padding: const EdgeInsets.fromLTRB(22, 18, 22, 36),
       children: [
-        const PageHeader(
-          eyebrow: 'Your phone, your data',
-          title: 'Settings',
-          subtitle:
-              'No account. No Smriti server. No telemetry. Entries live in a local '
-              'SQLite file on this device.',
-        ),
-        _SettingsCard(
+        const PageHeader(title: 'Settings'),
+        _Section(
+          title: 'Model',
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.memory_outlined,
-                  color: AppColors.faint,
-                  size: 22,
-                ),
+                Text(ModelService.label, style: theme.textTheme.titleMedium),
                 const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'On-device model',
-                    style: theme.textTheme.headlineSmall,
+                Text(
+                  ModelService.shortStatus,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: AppColors.olive,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
-                _StatusChip(label: ModelService.shortStatus),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 6),
             Text(ModelService.explanation, style: theme.textTheme.bodySmall),
-            const SizedBox(height: 10),
+            const SizedBox(height: 4),
             Text(
               ModelService.roadmapNote,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.faint,
               ),
             ),
-            const SizedBox(height: 14),
-            FilledButton.tonal(
-              onPressed: null,
-              child: const Text('Choose model (coming soon)'),
-            ),
           ],
         ),
-        const SizedBox(height: 16),
-        _SettingsCard(
+        _Section(
+          title: 'Support',
           children: [
-            Text('You', style: theme.textTheme.headlineSmall),
-            const SizedBox(height: 6),
             Text(
-              'Used only to show relevant support resources. Smriti is not a crisis service.',
+              'Used only to show the right helplines if something you write '
+              'looks like a crisis. Smriti cannot call anyone for you.',
               style: theme.textTheme.bodySmall,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               decoration: BoxDecoration(
-                color: AppColors.surfaceHigh,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.border),
+                color: AppColors.paperRaised,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: AppColors.line),
               ),
               child: DropdownButtonHideUnderline(
                 child: DropdownButton<String>(
                   isExpanded: true,
                   value: _country,
-                  dropdownColor: AppColors.surfaceHigh,
+                  dropdownColor: AppColors.paperRaised,
                   icon: const Icon(Icons.expand_more, color: AppColors.muted),
                   style: theme.textTheme.bodyMedium,
                   items: const [
@@ -189,73 +174,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        _SettingsCard(
+        _Section(
+          title: 'Data',
           children: [
-            Text('Data', style: theme.textTheme.headlineSmall),
-            const SizedBox(height: 6),
             Text(
-              '$_entryCount ${_entryCount == 1 ? 'entry' : 'entries'} stored on this phone.',
+              _loading
+                  ? 'Loading…'
+                  : '$_entryCount ${_entryCount == 1 ? 'entry' : 'entries'} on this phone.',
               style: theme.textTheme.bodySmall,
             ),
-            const SizedBox(height: 14),
-            Row(
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 10,
+              runSpacing: 8,
               children: [
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _loading ? null : _copyExport,
-                    icon: const Icon(Icons.copy_all_outlined, size: 18),
-                    label: const Text('Copy export'),
+                OutlinedButton(
+                  onPressed: _loading ? null : _copyExport,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.ink,
+                    side: const BorderSide(color: AppColors.line),
                   ),
+                  child: const Text('Copy export'),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: _clearing ? null : _clearJournal,
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.danger,
-                      side: BorderSide(
-                        color: AppColors.danger.withValues(alpha: 0.35),
-                      ),
+                OutlinedButton(
+                  onPressed: _clearing ? null : _clearJournal,
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.danger,
+                    side: BorderSide(
+                      color: AppColors.danger.withValues(alpha: 0.4),
                     ),
-                    icon: const Icon(Icons.delete_outline, size: 18),
-                    label: Text(_clearing ? 'Deleting…' : 'Delete data'),
                   ),
+                  child: Text(_clearing ? 'Deleting…' : 'Delete everything'),
                 ),
               ],
             ),
           ],
         ),
-        const SizedBox(height: 16),
-        _SettingsCard(
+        _Section(
+          title: 'About',
           children: [
-            Text('Privacy', style: theme.textTheme.headlineSmall),
-            const SizedBox(height: 6),
-            Text(
-              'Smriti has no server and no telemetry. There is no account to log '
-              'into. The app does not bundle or download a model right now, and it '
-              'does not call a cloud model.',
-              style: theme.textTheme.bodySmall,
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        _SettingsCard(
-          children: [
-            Text('About', style: theme.textTheme.headlineSmall),
-            const SizedBox(height: 6),
-            Text('Smriti v0.1.0 · MIT', style: theme.textTheme.bodySmall),
+            Text('Smriti 0.1.0 · MIT', style: theme.textTheme.bodySmall),
             const SizedBox(height: 4),
             Text(
-              'Android-first. iOS welcome when the free local build path is ready.',
+              'Built by one person. Android first; iOS when it is ready.',
               style: theme.textTheme.bodySmall,
             ),
             const SizedBox(height: 4),
             Text(
-              'Roadmap: Rust FFI core, encrypted storage, on-device GGUF, '
-              'home-screen / linking widget.',
+              'Next: a local model, then a home-screen widget for quick check-ins.',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: AppColors.faint,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'No account. No server. No analytics.',
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: AppColors.olive,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ],
@@ -265,50 +241,26 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 }
 
-class _SettingsCard extends StatelessWidget {
-  const _SettingsCard({required this.children});
+class _Section extends StatelessWidget {
+  const _Section({required this.title, required this.children});
 
+  final String title;
   final List<Widget> children;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(color: AppColors.border),
-      ),
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 26),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
-      ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.label});
-
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-      decoration: BoxDecoration(
-        color: AppColors.warning.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(color: AppColors.warning.withValues(alpha: 0.28)),
-      ),
-      child: Text(
-        label,
-        style: const TextStyle(
-          color: AppColors.warning,
-          fontSize: 11,
-          fontWeight: FontWeight.w700,
-        ),
+        children: [
+          Text(title, style: theme.textTheme.headlineSmall),
+          const SizedBox(height: 8),
+          ...children,
+          const SizedBox(height: 20),
+          const Divider(height: 1),
+        ],
       ),
     );
   }

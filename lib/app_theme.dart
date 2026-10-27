@@ -1,39 +1,54 @@
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
-  static const background = Color(0xFF0A1012);
-  static const surface = Color(0xFF121C1F);
-  static const surfaceHigh = Color(0xFF162327);
-  static const border = Color(0xFF243438);
-  static const text = Color(0xFFE9E4D8);
-  static const muted = Color(0xFF9BACAA);
-  static const faint = Color(0xFF6F8381);
-  static const mint = Color(0xFF83D3BB);
-  static const peach = Color(0xFFE6B18A);
-  static const danger = Color(0xFFEF9B8F);
-  static const warning = Color(0xFFE7C27A);
+  // Paper and ink.
+  static const paper = Color(0xFFF6F1E7);
+  static const paperRaised = Color(0xFFFBF7EF);
+  static const paperDeep = Color(0xFFEFE7D8);
+  static const ink = Color(0xFF23201B);
+  static const muted = Color(0xFF6F675C);
+  static const faint = Color(0xFF9A8F80);
+  static const line = Color(0xFFDDD2C0);
+
+  // Accents.
+  static const rust = Color(0xFFA9503B);
+  static const rustSoft = Color(0xFFE8C9BD);
+  static const olive = Color(0xFF5E6B52);
+  static const danger = Color(0xFF9E3D32);
+  static const warning = Color(0xFF8A6A2F);
+
+  // Existing widget names, mapped to the new palette.
+  static const background = paper;
+  static const surface = paperRaised;
+  static const surfaceHigh = paperDeep;
+  static const border = line;
+  static const text = ink;
+  static const accent = rust;
+  static const secondary = olive;
+  static const mint = accent;
+  static const peach = secondary;
 }
 
 ThemeData buildAppTheme() {
   final scheme =
       ColorScheme.fromSeed(
-        seedColor: AppColors.mint,
-        brightness: Brightness.dark,
+        seedColor: AppColors.rust,
+        brightness: Brightness.light,
       ).copyWith(
-        primary: AppColors.mint,
-        onPrimary: const Color(0xFF07110E),
-        secondary: AppColors.peach,
-        onSecondary: const Color(0xFF1B0F08),
-        surface: AppColors.surface,
-        onSurface: AppColors.text,
+        primary: AppColors.rust,
+        onPrimary: Colors.white,
+        secondary: AppColors.olive,
+        onSecondary: Colors.white,
+        surface: AppColors.paperRaised,
+        onSurface: AppColors.ink,
         error: AppColors.danger,
       );
 
   final base = ThemeData(
     useMaterial3: true,
-    brightness: Brightness.dark,
+    brightness: Brightness.light,
     colorScheme: scheme,
-    scaffoldBackgroundColor: AppColors.background,
+    scaffoldBackgroundColor: AppColors.paper,
     fontFamily: 'sans-serif',
   );
 
@@ -41,107 +56,111 @@ ThemeData buildAppTheme() {
     textTheme: base.textTheme.copyWith(
       displaySmall: const TextStyle(
         fontFamily: 'serif',
-        fontSize: 34,
-        height: 1.1,
-        letterSpacing: -0.7,
-        color: AppColors.text,
+        fontSize: 31,
+        height: 1.12,
+        letterSpacing: -0.5,
+        color: AppColors.ink,
       ),
       headlineMedium: const TextStyle(
         fontFamily: 'serif',
-        fontSize: 26,
-        height: 1.15,
-        letterSpacing: -0.4,
-        color: AppColors.text,
+        fontSize: 24,
+        height: 1.18,
+        letterSpacing: -0.25,
+        color: AppColors.ink,
       ),
       headlineSmall: const TextStyle(
         fontFamily: 'serif',
-        fontSize: 22,
+        fontSize: 20,
         height: 1.2,
-        color: AppColors.text,
+        color: AppColors.ink,
       ),
       titleMedium: const TextStyle(
-        fontSize: 15,
+        fontSize: 14.5,
         fontWeight: FontWeight.w600,
-        color: AppColors.text,
+        color: AppColors.ink,
       ),
       bodyMedium: const TextStyle(
         fontSize: 15.5,
-        height: 1.6,
-        color: AppColors.text,
+        height: 1.65,
+        color: AppColors.ink,
       ),
       bodySmall: const TextStyle(
-        fontSize: 13,
-        height: 1.45,
+        fontSize: 13.2,
+        height: 1.5,
         color: AppColors.muted,
       ),
       labelSmall: const TextStyle(
-        fontSize: 11,
-        letterSpacing: 1.4,
-        fontWeight: FontWeight.w700,
-        color: AppColors.mint,
+        fontSize: 10.5,
+        letterSpacing: 1.35,
+        fontWeight: FontWeight.w600,
+        color: AppColors.faint,
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.surfaceHigh,
+      fillColor: AppColors.paperRaised,
       hintStyle: const TextStyle(color: AppColors.faint, height: 1.5),
-      contentPadding: const EdgeInsets.all(18),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: const BorderSide(color: AppColors.border),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.line),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: const BorderSide(color: AppColors.border),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.line),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(18),
-        borderSide: const BorderSide(color: AppColors.mint, width: 1.3),
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(color: AppColors.rust, width: 1.2),
       ),
     ),
     filledButtonTheme: FilledButtonThemeData(
       style: FilledButton.styleFrom(
-        backgroundColor: AppColors.mint,
-        foregroundColor: const Color(0xFF07110E),
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-        textStyle: const TextStyle(fontSize: 14.5, fontWeight: FontWeight.w700),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+        backgroundColor: AppColors.rust,
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 13),
+        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: AppColors.mint,
+        foregroundColor: AppColors.rust,
         textStyle: const TextStyle(fontWeight: FontWeight.w600),
       ),
     ),
+    iconButtonTheme: IconButtonThemeData(
+      style: IconButton.styleFrom(foregroundColor: AppColors.muted),
+    ),
     navigationBarTheme: NavigationBarThemeData(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.paperRaised,
       surfaceTintColor: Colors.transparent,
-      indicatorColor: AppColors.mint.withValues(alpha: 0.16),
+      indicatorColor: Colors.transparent,
+      elevation: 0,
       labelTextStyle: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return TextStyle(
           fontSize: 11.5,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-          color: selected ? AppColors.text : AppColors.muted,
+          color: selected ? AppColors.rust : AppColors.muted,
         );
       }),
       iconTheme: WidgetStateProperty.resolveWith((states) {
         final selected = states.contains(WidgetState.selected);
         return IconThemeData(
-          size: 22,
-          color: selected ? AppColors.mint : AppColors.muted,
+          size: 21,
+          color: selected ? AppColors.rust : AppColors.muted,
         );
       }),
     ),
     snackBarTheme: SnackBarThemeData(
-      backgroundColor: AppColors.surfaceHigh,
-      contentTextStyle: const TextStyle(color: AppColors.text),
+      backgroundColor: AppColors.ink,
+      contentTextStyle: const TextStyle(color: AppColors.paper),
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     ),
     dividerTheme: const DividerThemeData(
-      color: AppColors.border,
+      color: AppColors.line,
       thickness: 1,
       space: 1,
     ),

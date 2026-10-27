@@ -23,12 +23,17 @@ class _HomeShellState extends State<HomeShell> {
     setState(() => _index = 3);
   }
 
+  void _openJournal() {
+    setState(() => _index = 1);
+  }
+
   Widget _page() {
     switch (_index) {
       case 0:
         return TodayScreen(
           repository: widget.repository,
           onOpenSettings: _openSettings,
+          onOpenJournal: _openJournal,
         );
       case 1:
         return TimelineScreen(repository: widget.repository);
@@ -49,88 +54,71 @@ class _HomeShellState extends State<HomeShell> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              padding: const EdgeInsets.fromLTRB(22, 14, 18, 12),
               child: Row(
                 children: [
                   Text(
                     'स्मृति',
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      color: AppColors.mint,
-                      fontSize: 24,
+                      color: AppColors.rust,
+                      fontSize: 21,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
                     'Smriti',
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontSize: 22,
+                      fontSize: 20,
                     ),
                   ),
                   const Spacer(),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.mint.withValues(alpha: 0.08),
-                      borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: AppColors.mint.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.lock_outline,
-                          size: 13,
-                          color: AppColors.mint,
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          'Local',
-                          style: TextStyle(
-                            color: AppColors.mint,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
+                  Tooltip(
+                    message: 'Stored on this phone',
+                    child: const Icon(
+                      Icons.lock_outline,
+                      size: 18,
+                      color: AppColors.faint,
                     ),
                   ),
                 ],
               ),
             ),
+            const Divider(height: 1),
             Expanded(child: _page()),
           ],
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (index) => setState(() => _index = index),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.edit_note_outlined),
-            selectedIcon: Icon(Icons.edit_note),
-            label: 'Today',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.timeline_outlined),
-            selectedIcon: Icon(Icons.timeline),
-            label: 'Timeline',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.mail_outline),
-            selectedIcon: Icon(Icons.mail),
-            label: 'Letter',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: 'Settings',
-          ),
-        ],
+      bottomNavigationBar: DecoratedBox(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: AppColors.line)),
+        ),
+        child: NavigationBar(
+          selectedIndex: _index,
+          onDestinationSelected: (index) => setState(() => _index = index),
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(Icons.edit_note_outlined),
+              selectedIcon: Icon(Icons.edit_note),
+              label: 'Today',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.menu_book_outlined),
+              selectedIcon: Icon(Icons.menu_book),
+              label: 'Journal',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.mail_outline),
+              selectedIcon: Icon(Icons.mail),
+              label: 'Weekly',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              selectedIcon: Icon(Icons.settings),
+              label: 'Settings',
+            ),
+          ],
+        ),
       ),
     );
   }

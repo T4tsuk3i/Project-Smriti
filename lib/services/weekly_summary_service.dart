@@ -86,7 +86,7 @@ class WeeklySummaryService {
 
   static String build(List<JournalEntry> entries) {
     if (entries.isEmpty) {
-      return 'No check-ins in the last seven days.';
+      return 'Nothing to sum up yet.';
     }
 
     final days = entries
@@ -125,34 +125,38 @@ class WeeklySummaryService {
       (a, b) => a.value >= b.value ? a : b,
     );
 
-    final buffer = StringBuffer()
-      ..writeln('This week')
-      ..writeln()
-      ..writeln(
-        'You checked in ${entries.length} ${entries.length == 1 ? 'time' : 'times'} '
-        'across ${days.length} ${days.length == 1 ? 'day' : 'days'}.',
+    final buffer = StringBuffer()..writeln('This week');
+
+    if (entries.length == 1) {
+      buffer.writeln();
+      buffer.writeln('You wrote once.');
+    } else {
+      buffer.writeln();
+      buffer.writeln(
+        'You wrote ${entries.length} times, on ${days.length} '
+        '${days.length == 1 ? 'day' : 'different days'}.',
       );
+    }
 
     if (words.isNotEmpty) {
       buffer.writeln();
-      buffer.writeln('The words that came up most: ${words.join(', ')}.');
+      buffer.writeln('Words you came back to: ${words.join(', ')}.');
     }
 
     buffer
       ..writeln()
       ..writeln(
-        'Your longest check-in was ${longest.content.trim().length} characters.',
+        'Your longest entry was ${longest.content.trim().length} characters.',
       );
 
     if (busiestDay.value > 1) {
-      buffer.writeln('Most of your check-ins happened on ${busiestDay.key}.');
+      buffer.writeln('Most of your writing happened on ${busiestDay.key}.');
     }
 
     buffer
       ..writeln()
       ..writeln(
-        'This is a local summary. Smriti has no on-device model configured yet, '
-        'so it is not interpreting the entries or making claims about you.',
+        'That is it. No model read this — it is just a count of what you wrote.',
       );
 
     return buffer.toString().trim();

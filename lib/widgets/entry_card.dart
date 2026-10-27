@@ -13,15 +13,12 @@ class EntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final date = DateFormat('MMM d, h:mm a').format(entry.createdAt);
+    final date = DateFormat('d MMM · h:mm a').format(entry.createdAt);
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.fromLTRB(18, 14, 12, 18),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppColors.border),
+      padding: const EdgeInsets.symmetric(vertical: 14),
+      decoration: const BoxDecoration(
+        border: Border(bottom: BorderSide(color: AppColors.line)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,19 +30,10 @@ class EntryCard extends StatelessWidget {
                   date,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: AppColors.faint,
-                    fontSize: 12,
+                    fontSize: 11.5,
                   ),
                 ),
               ),
-              if (entry.safetyFlag)
-                const Padding(
-                  padding: EdgeInsets.only(right: 6),
-                  child: Icon(
-                    Icons.favorite_outline,
-                    size: 16,
-                    color: AppColors.warning,
-                  ),
-                ),
               if (onDelete != null)
                 IconButton(
                   onPressed: onDelete,
@@ -53,16 +41,16 @@ class EntryCard extends StatelessWidget {
                   visualDensity: VisualDensity.compact,
                   icon: const Icon(
                     Icons.delete_outline,
-                    size: 19,
+                    size: 18,
                     color: AppColors.faint,
                   ),
                 ),
             ],
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 2),
           Text(
             entry.content,
-            style: theme.textTheme.bodyMedium?.copyWith(height: 1.6),
+            style: theme.textTheme.bodyMedium?.copyWith(height: 1.65),
           ),
         ],
       ),
