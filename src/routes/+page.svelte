@@ -53,7 +53,7 @@
         onFocus={() => (showFocus = true)}
       />
     {:else if tab === 'journal'}
-      <Journal />
+      <Journal onWrite={() => go('today')} />
     {:else if tab === 'weekly'}
       <Weekly />
     {:else}

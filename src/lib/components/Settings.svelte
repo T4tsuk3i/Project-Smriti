@@ -99,7 +99,8 @@
         </p>
       {/if}
       <p class="small mt-2" style="color: var(--faint)">
-        Local inference runs on the device. No server, no upload.
+        The file stays on the device. Inference will run locally; no server, no
+        upload.
       </p>
     {/if}
 

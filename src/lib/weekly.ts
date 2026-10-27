@@ -31,7 +31,8 @@ export function computeWeekStats(entries: Entry[], now = new Date()): WeekStats 
       date,
       label: new Intl.DateTimeFormat(undefined, { weekday: 'short' }).format(date),
       words: sameDay.reduce((sum, entry) => sum + wordCount(entry.content), 0),
-      wrote: sameDay.length > 0
+      wrote: sameDay.length > 0,
+      mood: sameDay.find((entry) => entry.mood)?.mood
     });
   }
 

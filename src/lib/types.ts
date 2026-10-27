@@ -39,6 +39,7 @@ export interface DayBar {
   label: string;
   words: number;
   wrote: boolean;
+  mood?: MoodId;
 }
 
 export interface WeekStats {
