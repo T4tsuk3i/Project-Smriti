@@ -6,6 +6,7 @@
 
 **Android-first. Tauri 2 + Svelte + Rust. No Android Studio. No cloud.**
 
+[![CI](https://github.com/T4tsuk3i/Project-Smriti/actions/workflows/ci.yml/badge.svg)](https://github.com/T4tsuk3i/Project-Smriti/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![Status](https://img.shields.io/badge/status-design%20prototype-orange)
 ![Tauri](https://img.shields.io/badge/Tauri-2-24c8db)
